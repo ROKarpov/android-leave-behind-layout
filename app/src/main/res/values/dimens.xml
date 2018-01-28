@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="contact_list_item__horizontal_padding">16dp</dimen>
+    <dimen name="contact_list_item__image_size">40dp</dimen>
+
+    <dimen name="lbl_item__horizontal_padding">24dp</dimen>
+    <dimen name="lbl_item__vertical_padding">16dp</dimen>
+</resources>
