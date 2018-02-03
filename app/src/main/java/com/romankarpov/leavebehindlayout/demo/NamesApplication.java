@@ -1,5 +1,6 @@
 package com.romankarpov.leavebehindlayout.demo;
 
+import android.animation.Animator;
 import android.app.Application;
 
 import com.google.gson.Gson;
@@ -20,6 +21,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class NamesApplication extends Application {
     private UiNamesService mUiNamesService;
+
+    Animator anim;
 
     @Override
     public void onCreate() {

@@ -1,0 +1,58 @@
+apply plugin: 'com.android.library'
+
+ext {
+    bintrayRepo = 'LeaveBehindLayout'
+    bintrayName = 'leavebehindlayout-extensions'
+
+    publishedGroupId = 'com.romankarpov'
+    libraryName = 'LeaveBehindLayout Extensions'
+    artifact = 'leavebehindlayout-extensions'
+
+    libraryDescription = 'Contains helper classes that controls layout choreography in the RecyclerView.'
+
+    siteUrl = 'https://github.com/ROKarpov/LeaveBehindLayout'
+    gitUrl = 'https://github.com/ROKarpov/LeaveBehindLayout.git'
+
+    libraryVersion = '0.1.0'
+
+    developerId = 'ROKarpov'
+    developerName = 'Roman Karpov'
+    developerEmail = 'karpovror@gmail.com'
+
+    licenseName = 'The GNU General Public License, Version 3.0'
+    licenseUrl = 'https://www.gnu.org/licenses/gpl-3.0.en.html'
+    allLicenses = ["gpl-3.0"]
+}
+
+android {
+    compileSdkVersion 27
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    buildToolsVersion '26.0.2'
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile project(':leavebehindlayout')
+    compile 'com.android.support:recyclerview-v7:27.0.2'
+    compile 'com.android.support:appcompat-v7:27.0.2'
+    testCompile 'junit:junit:4.12'
+    androidTestCompile 'com.android.support.test:runner:1.0.1'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'
+}
+
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
