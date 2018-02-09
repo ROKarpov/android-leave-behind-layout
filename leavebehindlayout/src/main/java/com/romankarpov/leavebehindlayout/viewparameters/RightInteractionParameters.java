@@ -1,9 +1,11 @@
 package com.romankarpov.leavebehindlayout.viewparameters;
 
+import android.support.animation.DynamicAnimation;
 import android.support.v4.view.ViewCompat;
+import android.view.VelocityTracker;
 import android.view.View;
 import org.jetbrains.annotations.NotNull;
-import com.romankarpov.leavebehindlayout.animations.LeftBehindViewAnimation;
+import com.romankarpov.leavebehindlayout.leavebehindviewanimations.LeftBehindViewAnimation;
 
 
 public class RightInteractionParameters extends AbstractInteractionParameters {
@@ -85,5 +87,26 @@ public class RightInteractionParameters extends AbstractInteractionParameters {
     @Override
     public float getFlyoutPositionY() {
         return 0;
+    }
+
+    @Override
+    public float getClosedPosition() {
+        return 0;
+    }
+    @Override
+    public float getOpenedPosition() {
+        return -getLeftBehindView().getWidth();
+    }
+    @Override
+    public float getFlewOutPosition() {
+        return -getForeView().getWidth();
+    }
+    @Override
+    public float getVelocityFrom(VelocityTracker tracker) {
+        return tracker.getXVelocity();
+    }
+    @Override
+    public DynamicAnimation.ViewProperty getAnimatedProperty() {
+        return DynamicAnimation.TRANSLATION_X;
     }
 }

@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
+import android.support.animation.DynamicAnimation;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -16,10 +17,8 @@ import android.widget.FrameLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.romankarpov.leavebehindlayout.animations.LeftBehindViewAnimationProvider;
-import com.romankarpov.leavebehindlayout.animations.StaticLeftBehindAnimationProvider;
-import com.romankarpov.leavebehindlayout.physics.PhysicsAnimationConfig;
-import com.romankarpov.leavebehindlayout.physics.PhysicsAnimator;
+import com.romankarpov.leavebehindlayout.leavebehindviewanimations.LeftBehindViewAnimationProvider;
+import com.romankarpov.leavebehindlayout.leavebehindviewanimations.StaticLeftBehindAnimationProvider;
 
 
 public class LeaveBehindLayout extends ViewGroup {
@@ -46,7 +45,9 @@ public class LeaveBehindLayout extends ViewGroup {
 
     private LeaveBehindLayoutState mState;
     private VelocityTracker mVelocityTracker;
-    private PhysicsAnimator mPhysicsAnimator;
+//    /*private */PhysicsAnimator mPhysicsAnimator;
+    private DynamicAnimation mAnimation;
+
     private int mFlyoutableFlags;
     private final List<Listener> mListeners = new ArrayList<>(1);
 
@@ -269,20 +270,20 @@ public class LeaveBehindLayout extends ViewGroup {
     VelocityTracker getVelocityTracker() {
         return mVelocityTracker;
     }
-//    PhysicsAnimator getAnimator() {
-//        return mPhysicsAnimator;
-//    }
+
     public LeftBehindViewAnimationProvider getLeftBehindViewAnimationProvider() {
         return mLeftBehindViewAnimationProvider;
     }
     void startAnimationToCurrentState() {
-        mIsAnimated = true;
-        PhysicsAnimationConfig config = this.mState.createAnimationConfig(this);
-        this.mPhysicsAnimator.start(config);
+        endAnimation();
+        mAnimation =  mConfig.createAnimation(mState);
+        mAnimation.start();
     }
     void endAnimation() {
-        mIsAnimated = false;
-        mPhysicsAnimator.end();
+        if (mAnimation != null) {
+            mAnimation.cancel();
+            mAnimation = null;
+        }
     }
 
 
@@ -389,9 +390,7 @@ public class LeaveBehindLayout extends ViewGroup {
         final int minFlingVelocity = vc.getScaledMinimumFlingVelocity();
 
         mConfig = new LeaveBehindLayoutConfig(touchSlop, minFlingVelocity, maxFlingVelocity);
-        mPhysicsAnimator = new PhysicsAnimator();
         mState = LeaveBehindLayout.CLOSED_STATE;
-        mIsAnimated = false;
 
         TypedArray a = context.getTheme().obtainStyledAttributes(
                 attrs,

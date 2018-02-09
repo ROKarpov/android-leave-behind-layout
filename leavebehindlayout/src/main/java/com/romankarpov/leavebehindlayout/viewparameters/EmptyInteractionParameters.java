@@ -1,6 +1,8 @@
 package com.romankarpov.leavebehindlayout.viewparameters;
 
+import android.support.animation.DynamicAnimation;
 import android.view.Gravity;
+import android.view.VelocityTracker;
 import android.view.View;
 
 import org.jetbrains.annotations.NotNull;
@@ -120,5 +122,31 @@ public class EmptyInteractionParameters implements InteractionParameters {
     @Override
     public float clipVelocityY(float velocity, float minVelocity, float maxVelocity) {
         return 0;
+    }
+
+
+    @Override
+    public float getClosedPosition() {
+        return 0;
+    }
+
+    @Override
+    public float getOpenedPosition() {
+        return 0;
+    }
+
+    @Override
+    public float getFlewOutPosition() {
+        return 0;
+    }
+
+    @Override
+    public float getVelocityFrom(VelocityTracker tracker) {
+        return 0;
+    }
+
+    @Override
+    public DynamicAnimation.ViewProperty getAnimatedProperty() {
+        return DynamicAnimation.TRANSLATION_X;
     }
 }

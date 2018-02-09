@@ -1,10 +1,8 @@
 package com.romankarpov.leavebehindlayout;
 
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 
-import com.romankarpov.leavebehindlayout.physics.PhysicsAnimationConfig;
 
 
 class DraggingLayoutState implements LeaveBehindLayoutState {
@@ -88,11 +86,13 @@ class DraggingLayoutState implements LeaveBehindLayoutState {
 
     @Override
     public void applyLayout(LeaveBehindLayout layout) {
-        throw new IllegalStateException("The applyLayout method is not applicable in this state.");
+        LeaveBehindLayoutConfig config = layout.getConfig();
+        config.trySetOffset(config.getFlyoutPositionX(), config.getFlyoutPositionY());
+        layout.invalidate();
     }
 
     @Override
-    public PhysicsAnimationConfig createAnimationConfig(LeaveBehindLayout layout) {
-        throw new IllegalStateException("");
+    public float getFinalPositionFrom(LeaveBehindLayoutConfig config) {
+        throw new IllegalStateException("The \'getFinalPositionFrom\' method is not applicable in this state.");
     }
 }

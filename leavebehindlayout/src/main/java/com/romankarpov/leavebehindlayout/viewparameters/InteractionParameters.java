@@ -1,5 +1,7 @@
 package com.romankarpov.leavebehindlayout.viewparameters;
 
+import android.support.animation.DynamicAnimation;
+import android.view.VelocityTracker;
 import android.view.View;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,4 +43,10 @@ public interface InteractionParameters {
 
     float getFlyoutPositionX();
     float getFlyoutPositionY();
+
+    float getClosedPosition();
+    float getOpenedPosition();
+    float getFlewOutPosition();
+    float getVelocityFrom(VelocityTracker tracker);
+    DynamicAnimation.ViewProperty getAnimatedProperty();
 }

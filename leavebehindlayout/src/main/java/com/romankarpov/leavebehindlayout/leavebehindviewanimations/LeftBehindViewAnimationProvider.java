@@ -1,4 +1,4 @@
-package com.romankarpov.leavebehindlayout.animations;
+package com.romankarpov.leavebehindlayout.leavebehindviewanimations;
 
 public interface LeftBehindViewAnimationProvider {
     LeftBehindViewAnimation getLeftAnimation();

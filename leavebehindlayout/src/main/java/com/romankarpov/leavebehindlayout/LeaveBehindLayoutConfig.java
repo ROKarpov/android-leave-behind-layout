@@ -1,8 +1,12 @@
 package com.romankarpov.leavebehindlayout;
 
+import android.support.animation.DynamicAnimation;
+import android.support.animation.SpringAnimation;
+import android.support.animation.SpringForce;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
 import android.view.Gravity;
+import android.view.VelocityTracker;
 import android.view.View;
 
 import org.jetbrains.annotations.NotNull;
@@ -11,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.romankarpov.leavebehindlayout.animations.LeftBehindViewAnimationProvider;
+import com.romankarpov.leavebehindlayout.leavebehindviewanimations.LeftBehindViewAnimationProvider;
 import com.romankarpov.leavebehindlayout.viewparameters.BottomInteractionParameters;
 import com.romankarpov.leavebehindlayout.viewparameters.EmptyInteractionParameters;
 import com.romankarpov.leavebehindlayout.viewparameters.InteractionParameters;
@@ -90,6 +94,17 @@ final class LeaveBehindLayoutConfig {
     public float getFlyoutPositionY() {
         return mCurrentOpeningParameters.getFlyoutPositionY();
     }
+
+    public float getClosedPosition() {
+        return mCurrentOpeningParameters.getClosedPosition();
+    }
+    public float getOpenedPosition() {
+        return mCurrentOpeningParameters.getOpenedPosition();
+    }
+    public float getFlewOutPosition() {
+        return mCurrentOpeningParameters.getFlewOutPosition();
+    }
+
 
     public boolean isPointInForeView(float x, float y) {
         View foreView = mCurrentOpeningParameters.getForeView();
@@ -323,6 +338,21 @@ final class LeaveBehindLayoutConfig {
     public float clipVelocityY(float velocityY) {
         return mCurrentOpeningParameters.clipVelocityY(velocityY, mMinFlingVelocity, mMaxFlingVelocity);
 
+    }
+
+    public DynamicAnimation createAnimation(LeaveBehindLayoutState state, VelocityTracker velocityTracker) {
+        float finalPosition = state.getFinalPositionFrom(this);
+        float startVelocoty = mCurrentOpeningParameters.getVelocityFrom(velocityTracker);
+        DynamicAnimation.ViewProperty animatedProperty = mCurrentOpeningParameters.getAnimatedProperty();
+
+        final SpringForce force = new SpringForce();
+        force.setFinalPosition(finalPosition)
+                .setStiffness(SpringForce.STIFFNESS_MEDIUM)
+                .setDampingRatio(SpringForce.DAMPING_RATIO_NO_BOUNCY);
+        final SpringAnimation animation = new SpringAnimation(getForeView(), animatedProperty);
+        animation.setSpring(force);
+        animation.setStartVelocity(startVelocoty);
+        return animation;
     }
 
     private String getGravityString(int gravity) {

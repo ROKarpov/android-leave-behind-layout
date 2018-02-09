@@ -2,12 +2,6 @@ package com.romankarpov.leavebehindlayout;
 
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.VelocityTracker;
-
-import com.romankarpov.leavebehindlayout.physics.FrictionPhysicsBehavior;
-import com.romankarpov.leavebehindlayout.physics.PhysicsAnimationConfig;
-import com.romankarpov.leavebehindlayout.physics.PhysicsObject;
-import com.romankarpov.leavebehindlayout.physics.SpringPhysicsBehavior;
 
 class OpenedLayoutState implements LeaveBehindLayoutState {
     @Override
@@ -115,51 +109,8 @@ class OpenedLayoutState implements LeaveBehindLayoutState {
     }
 
     @Override
-    public PhysicsAnimationConfig createAnimationConfig(LeaveBehindLayout layout) {
-        final LeaveBehindLayoutConfig config = layout.getConfig();
-        final VelocityTracker velocityTracker = layout.getVelocityTracker();
-
-        final float positionX = config.getCurrentPositionX();
-        final float positionY = config.getCurrentPositionY();
-        final float velocityX = config.clipVelocityX(
-                velocityTracker.getXVelocity());
-        final float velocityY = config.clipVelocityY(
-                velocityTracker.getYVelocity());
-
-        final float lastPositionX = config.getOpenedPositionX();
-        final float lastPositionY = config.getOpenedPositionY();
-
-        final PhysicsObject object =  new PhysicsObject(1, velocityX, velocityY, positionX, positionY);
-        final PhysicsAnimationConfig.Callback callback = new AnimatorCallback(layout, this);
-
-        final PhysicsAnimationConfig animationConfig = new PhysicsAnimationConfig(object, callback);
-        animationConfig.addPhysicsBehavior(new SpringPhysicsBehavior(300, lastPositionX, lastPositionY));
-        animationConfig.addPhysicsBehavior(new FrictionPhysicsBehavior(0.6f));
-        return animationConfig;
-    }
-
-    class AnimatorCallback extends AbstractAnimatorCallback {
-        AnimatorCallback(LeaveBehindLayout layout, LeaveBehindLayoutState terminalState) {
-            super(layout, terminalState);
-        }
-
-        @Override
-        protected void notifyListenersOnProgress() {
-            final LeaveBehindLayout layout = this.getLayout();
-            final LeaveBehindLayoutConfig config = layout.getConfig();
-            layout.dispatchLeaveBehindOpeningProgress(
-                    config.getLeftBehindGravity(),
-                    config.getLeftBehindView(),
-                    config.calculateOpenProgress()
-            );
-        }
-
-        @Override
-        protected void notifyListenersOnFinish() {
-            final LeaveBehindLayout layout = this.getLayout();
-            final LeaveBehindLayoutConfig config = layout.getConfig();
-            layout.dispatchLeaveBehindOpened(config.getLeftBehindGravity(), config.getLeftBehindView());
-        }
+    public float getFinalPositionFrom(LeaveBehindLayoutConfig config) {
+        return config.getOpenedPosition();
     }
 }
 

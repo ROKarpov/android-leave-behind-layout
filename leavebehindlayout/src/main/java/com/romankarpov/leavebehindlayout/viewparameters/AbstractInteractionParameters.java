@@ -1,13 +1,13 @@
 package com.romankarpov.leavebehindlayout.viewparameters;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
 import android.support.v4.view.ViewCompat;
 import android.view.Gravity;
 import android.view.View;
 
 
-import com.romankarpov.leavebehindlayout.animations.LeftBehindViewAnimation;
+import com.romankarpov.leavebehindlayout.leavebehindviewanimations.LeftBehindViewAnimation;
 
 public abstract class AbstractInteractionParameters implements InteractionParameters {
     private View mForeView;
