@@ -66,11 +66,11 @@ public class EmptyInteractionParameters implements InteractionParameters {
     }
 
     @Override
-    public float calculateOpenProgress() {
+    public float calculateOpeningProgress() {
         return 0.f;
     }
     @Override
-    public float calculateFlyoutProgress() {
+    public float calculateFlyingOutProgress() {
         return 0.f;
     }
 
@@ -148,5 +148,10 @@ public class EmptyInteractionParameters implements InteractionParameters {
     @Override
     public DynamicAnimation.ViewProperty getAnimatedProperty() {
         return DynamicAnimation.TRANSLATION_X;
+    }
+
+    @Override
+    public void applyLeftBehindAnimation(float value) {
+
     }
 }

@@ -20,11 +20,11 @@ public class BottomInteractionParameters extends AbstractInteractionParameters {
     }
 
     @Override
-    public float calculateOpenProgress() {
+    public float calculateOpeningProgress() {
         return -ViewCompat.getTranslationY(getForeView()) / getLeftBehindView().getMeasuredHeight();
     }
     @Override
-    public float calculateFlyoutProgress() {
+    public float calculateFlyingOutProgress() {
         final View foreView = getForeView();
         return -ViewCompat.getTranslationY(foreView) / foreView.getMeasuredHeight();
     }
@@ -39,7 +39,7 @@ public class BottomInteractionParameters extends AbstractInteractionParameters {
     }
     @Override
     public boolean shouldOpen(float velocityX, float velocityY, float progressThreshold) {
-        final float openProgress = calculateOpenProgress();
+        final float openProgress = calculateOpeningProgress();
         return (isOpenable()
                 && (velocityY <= 0.f)
                 && (openProgress >= progressThreshold)
@@ -50,8 +50,8 @@ public class BottomInteractionParameters extends AbstractInteractionParameters {
     public boolean shouldFlyout(float velocityX, float velocityY, float progressThreshold) {
         return isFlyoutable()
                 && (velocityY <= 0.f)
-                && ((isOpenable() && (calculateOpenProgress() > 1.f) && (velocityY < 0.f))
-                || (!isOpenable() && (calculateFlyoutProgress() >= progressThreshold))
+                && ((isOpenable() && (calculateOpeningProgress() > 1.f) && (velocityY < 0.f))
+                || (!isOpenable() && (calculateFlyingOutProgress() >= progressThreshold))
         );
     }
 
@@ -109,5 +109,10 @@ public class BottomInteractionParameters extends AbstractInteractionParameters {
     @Override
     public DynamicAnimation.ViewProperty getAnimatedProperty() {
         return DynamicAnimation.TRANSLATION_Y;
+    }
+
+    @Override
+    protected float selectOffset(float offsetX, float offsetY) {
+        return offsetY;
     }
 }

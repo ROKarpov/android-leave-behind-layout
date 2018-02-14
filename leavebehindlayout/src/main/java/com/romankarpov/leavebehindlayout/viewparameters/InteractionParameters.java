@@ -26,8 +26,8 @@ public interface InteractionParameters {
     boolean shouldFlyout(float velocityX, float velocityY, float progressThreshold);
 
     void applyOffset(float offsetX, float offsetY);
-    float calculateOpenProgress();
-    float calculateFlyoutProgress();
+    float calculateOpeningProgress();
+    float calculateFlyingOutProgress();
 
     float clipVelocityX(float velocity, float minVelocity, float maxVelocity);
     float clipVelocityY(float velocity, float minVelocity, float maxVelocity);
@@ -44,9 +44,11 @@ public interface InteractionParameters {
     float getFlyoutPositionX();
     float getFlyoutPositionY();
 
+
     float getClosedPosition();
     float getOpenedPosition();
     float getFlewOutPosition();
     float getVelocityFrom(VelocityTracker tracker);
     DynamicAnimation.ViewProperty getAnimatedProperty();
+    void applyLeftBehindAnimation(float value);
 }

@@ -1,8 +1,8 @@
 package com.romankarpov.leavebehindlayout;
 
+import android.support.animation.DynamicAnimation;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
-
 
 
 class DraggingLayoutState implements LeaveBehindLayoutState {
@@ -94,5 +94,15 @@ class DraggingLayoutState implements LeaveBehindLayoutState {
     @Override
     public float getFinalPositionFrom(LeaveBehindLayoutConfig config) {
         throw new IllegalStateException("The \'getFinalPositionFrom\' method is not applicable in this state.");
+    }
+
+    @Override
+    public DynamicAnimation.OnAnimationUpdateListener getAnimationUpdateListener(LeaveBehindLayout layout) {
+        throw new IllegalStateException("The \'getAnimationUpdateListener\' method is not applicable in this state.");
+    }
+
+    @Override
+    public DynamicAnimation.OnAnimationEndListener getAnimationEndListener(LeaveBehindLayout layout) {
+        throw new IllegalStateException("The \'getAnimationEndListener\' method is not applicable in this state.");
     }
 }

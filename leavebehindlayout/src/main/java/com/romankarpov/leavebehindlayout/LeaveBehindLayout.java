@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.support.animation.DynamicAnimation;
+import android.support.animation.SpringAnimation;
+import android.support.animation.SpringForce;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -18,7 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.romankarpov.leavebehindlayout.leavebehindviewanimations.LeftBehindViewAnimationProvider;
-import com.romankarpov.leavebehindlayout.leavebehindviewanimations.StaticLeftBehindAnimationProvider;
+import com.romankarpov.leavebehindlayout.leavebehindviewanimations.EmptyLeftBehindAnimationProvider;
+import com.romankarpov.leavebehindlayout.leavebehindviewanimations.SlideLeftBehindViewAnimationProvider;
 
 
 public class LeaveBehindLayout extends ViewGroup {
@@ -29,7 +32,7 @@ public class LeaveBehindLayout extends ViewGroup {
             | Gravity.RIGHT
             | Gravity.END
             | Gravity.BOTTOM;
-    private static LeftBehindViewAnimationProvider DEFAULT_ANIMATION_PROVIDER = StaticLeftBehindAnimationProvider.get();
+    private static LeftBehindViewAnimationProvider DEFAULT_ANIMATION_PROVIDER = SlideLeftBehindViewAnimationProvider.get();
 
     public static final int FLAG_CLOSED = 0;
     static final LeaveBehindLayoutState CLOSED_STATE = new ClosedLayoutState();
@@ -276,16 +279,32 @@ public class LeaveBehindLayout extends ViewGroup {
     }
     void startAnimationToCurrentState() {
         endAnimation();
-        mAnimation =  mConfig.createAnimation(mState);
+        float finalPosition = this.mState.getFinalPositionFrom(this.mConfig);
+
+        float startVelocoty = mVelocityTracker != null
+                ? mConfig.getVelocityFrom(mVelocityTracker)
+                : 0f;
+        DynamicAnimation.ViewProperty animatedProperty = mConfig.getAnimatedProperty();
+
+        final SpringForce force = new SpringForce();
+        force.setFinalPosition(finalPosition)
+                .setStiffness(SpringForce.STIFFNESS_MEDIUM)
+                .setDampingRatio(SpringForce.DAMPING_RATIO_NO_BOUNCY);
+        final SpringAnimation animation = new SpringAnimation(this.mConfig.getForeView(), animatedProperty);
+        animation.setSpring(force);
+        animation.setStartVelocity(startVelocoty);
+        animation.addUpdateListener(this.mState.getAnimationUpdateListener(this));
+        animation.addEndListener(this.mState.getAnimationEndListener(this));
+        mAnimation = animation;
         mAnimation.start();
     }
+
     void endAnimation() {
         if (mAnimation != null) {
             mAnimation.cancel();
             mAnimation = null;
         }
     }
-
 
     LeaveBehindLayoutState getState() {
         return mState;

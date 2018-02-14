@@ -1,7 +1,9 @@
 package com.romankarpov.leavebehindlayout;
 
+import android.support.animation.DynamicAnimation;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 
 class OpenedLayoutState implements LeaveBehindLayoutState {
     @Override
@@ -111,6 +113,46 @@ class OpenedLayoutState implements LeaveBehindLayoutState {
     @Override
     public float getFinalPositionFrom(LeaveBehindLayoutConfig config) {
         return config.getOpenedPosition();
+    }
+
+    @Override
+    public DynamicAnimation.OnAnimationUpdateListener getAnimationUpdateListener(LeaveBehindLayout layout) {
+        return new AnimationUpdateListener(layout);
+    }
+
+    @Override
+    public DynamicAnimation.OnAnimationEndListener getAnimationEndListener(LeaveBehindLayout layout) {
+        return new AnimationEndListener(layout);
+    }
+
+    class AnimationUpdateListener implements DynamicAnimation.OnAnimationUpdateListener {
+        LeaveBehindLayout mLayout;
+
+        public AnimationUpdateListener(LeaveBehindLayout layout) {
+            mLayout = layout;
+        }
+
+        @Override
+        public void onAnimationUpdate(DynamicAnimation animation, float value, float velocity) {
+            final LeaveBehindLayoutConfig config = mLayout.getConfig();
+            final int gravity = config.getLeftBehindGravity();
+            final View view = config.getLeftBehindView();
+            final float progress = config.calculateOpeningProgress();
+            mLayout.dispatchLeaveBehindOpeningProgress(gravity, view, progress);
+        }
+    }
+
+    class AnimationEndListener implements DynamicAnimation.OnAnimationEndListener {
+        private LeaveBehindLayout mLayout;
+
+        public AnimationEndListener(LeaveBehindLayout layout) {
+            mLayout = layout;
+        }
+        @Override
+        public void onAnimationEnd(DynamicAnimation animation, boolean canceled, float value, float velocity) {
+            final LeaveBehindLayoutConfig config = mLayout.getConfig();
+            mLayout.dispatchLeaveBehindOpened(config.getLeftBehindGravity(), config.getLeftBehindView());
+        }
     }
 }
 

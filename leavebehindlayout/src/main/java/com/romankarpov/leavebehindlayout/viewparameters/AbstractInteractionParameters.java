@@ -57,15 +57,17 @@ public abstract class AbstractInteractionParameters implements InteractionParame
 
     public abstract boolean areOffsetsApplicable(float offsetX, float offsetY);
     public void applyOffset(float offsetX, float offsetY) {
-        ViewCompat.setTranslationX(this.getForeView(), this.clipOffsetX(offsetX));
-        ViewCompat.setTranslationY(this.getForeView(), this.clipOffsetY(offsetY));
+        final float offset = selectOffset(offsetX, offsetY);
+        getAnimatedProperty().setValue(this.getForeView(), offset);
+//        ViewCompat.setTranslationX(this.getForeView(), this.clipOffsetX(offsetX));
+//        ViewCompat.setTranslationY(this.getForeView(), this.clipOffsetY(offsetY));
 
-        final float progress = this.calculateOpenProgress();
-        mLeftBehindViewAnimation.apply(mLeftBehindView, progress);
+        final float progress = this.calculateOpeningProgress();
+        mLeftBehindViewAnimation.apply(mLeftBehindView, offset);
     }
 
-    public abstract float calculateOpenProgress();
-    public abstract float calculateFlyoutProgress();
+    public abstract float calculateOpeningProgress();
+    public abstract float calculateFlyingOutProgress();
 
     protected abstract float clipOffsetX(float offset);
     protected abstract float clipOffsetY(float offset);
@@ -98,6 +100,8 @@ public abstract class AbstractInteractionParameters implements InteractionParame
     public abstract boolean shouldOpen(float velocityX, float velocityY, float progressThreshold);
     public abstract boolean shouldFlyout(float velocityX, float velocityY, float progressThreshold);
 
+    protected abstract float selectOffset(float offsetX, float offsetY);
+
     protected boolean isOpenable() {
         return mIsOpenable;
     }
@@ -111,5 +115,10 @@ public abstract class AbstractInteractionParameters implements InteractionParame
         } else {
             return Math.max(-minVelocity, Math.min(maxVelocity, velocity));
         }
+    }
+
+    @Override
+    public void applyLeftBehindAnimation(float value) {
+        mLeftBehindViewAnimation.apply(mLeftBehindView, value);
     }
 }

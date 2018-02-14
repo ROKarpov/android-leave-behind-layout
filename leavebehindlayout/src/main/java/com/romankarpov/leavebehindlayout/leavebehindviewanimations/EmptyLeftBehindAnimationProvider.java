@@ -1,17 +1,17 @@
 package com.romankarpov.leavebehindlayout.leavebehindviewanimations;
 
 
-public class StaticLeftBehindAnimationProvider implements LeftBehindViewAnimationProvider {
-    private static StaticLeftBehindAnimationProvider sInstance;
-    private StaticLeftBehindViewAnimation mAnimation;
+public class EmptyLeftBehindAnimationProvider implements LeftBehindViewAnimationProvider {
+    private static EmptyLeftBehindAnimationProvider sInstance;
+    private EmptyLeftBehindViewAnimation mAnimation;
 
-    private StaticLeftBehindAnimationProvider() {
-        mAnimation = new StaticLeftBehindViewAnimation();
+    private EmptyLeftBehindAnimationProvider() {
+        mAnimation = new EmptyLeftBehindViewAnimation();
     }
 
-    public static StaticLeftBehindAnimationProvider get() {
+    public static EmptyLeftBehindAnimationProvider get() {
         if (sInstance == null) {
-            sInstance = new StaticLeftBehindAnimationProvider();
+            sInstance = new EmptyLeftBehindAnimationProvider();
         }
         return sInstance;
     }

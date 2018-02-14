@@ -20,11 +20,11 @@ public class RightInteractionParameters extends AbstractInteractionParameters {
     }
 
     @Override
-    public float calculateOpenProgress() {
+    public float calculateOpeningProgress() {
         return -ViewCompat.getTranslationX(getForeView()) / getLeftBehindView().getMeasuredWidth();
     }
     @Override
-    public float calculateFlyoutProgress() {
+    public float calculateFlyingOutProgress() {
         final View foreView = getForeView();
         return -ViewCompat.getTranslationX(foreView) / foreView.getMeasuredWidth();
     }
@@ -39,7 +39,7 @@ public class RightInteractionParameters extends AbstractInteractionParameters {
     }
     @Override
     public boolean shouldOpen(float velocityX, float velocityY, float progressThreshold) {
-        final float openProgress = calculateOpenProgress();
+        final float openProgress = calculateOpeningProgress();
         return (isOpenable()
                 && (velocityX <= 0.f)
                 && (openProgress >= progressThreshold)
@@ -50,8 +50,8 @@ public class RightInteractionParameters extends AbstractInteractionParameters {
     public boolean shouldFlyout(float velocityX, float velocityY, float progressThreshold) {
         return isFlyoutable()
                 && (velocityX <= 0.f)
-                && ((isOpenable() && calculateOpenProgress() > 1.f )
-                || (!isOpenable() && calculateFlyoutProgress() <= progressThreshold)
+                && ((isOpenable() && calculateOpeningProgress() > 1.f )
+                || (!isOpenable() && calculateFlyingOutProgress() <= progressThreshold)
         );
     }
 
@@ -108,5 +108,10 @@ public class RightInteractionParameters extends AbstractInteractionParameters {
     @Override
     public DynamicAnimation.ViewProperty getAnimatedProperty() {
         return DynamicAnimation.TRANSLATION_X;
+    }
+
+    @Override
+    protected float selectOffset(float offsetX, float offsetY) {
+        return offsetX;
     }
 }
