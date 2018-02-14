@@ -343,6 +343,10 @@ final class LeaveBehindLayoutConfig {
 
     }
 
+    public void applyLeftBehindViewAnimation(float value) {
+        mCurrentOpeningParameters.applyLeftBehindViewAnimation(value);
+    }
+
     private String getGravityString(int gravity) {
         switch (gravity) {
             case Gravity.NO_GRAVITY: return "no_gravity";

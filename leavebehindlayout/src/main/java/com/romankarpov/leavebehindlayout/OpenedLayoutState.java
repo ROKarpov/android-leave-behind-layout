@@ -135,6 +135,7 @@ class OpenedLayoutState implements LeaveBehindLayoutState {
         @Override
         public void onAnimationUpdate(DynamicAnimation animation, float value, float velocity) {
             final LeaveBehindLayoutConfig config = mLayout.getConfig();
+            config.applyLeftBehindViewAnimation(value);
             final int gravity = config.getLeftBehindGravity();
             final View view = config.getLeftBehindView();
             final float progress = config.calculateOpeningProgress();

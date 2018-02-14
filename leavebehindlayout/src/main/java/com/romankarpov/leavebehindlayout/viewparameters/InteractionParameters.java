@@ -50,5 +50,5 @@ public interface InteractionParameters {
     float getFlewOutPosition();
     float getVelocityFrom(VelocityTracker tracker);
     DynamicAnimation.ViewProperty getAnimatedProperty();
-    void applyLeftBehindAnimation(float value);
+    void applyLeftBehindViewAnimation(float value);
 }

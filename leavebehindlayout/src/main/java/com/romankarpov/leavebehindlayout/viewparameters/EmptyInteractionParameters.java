@@ -151,7 +151,7 @@ public class EmptyInteractionParameters implements InteractionParameters {
     }
 
     @Override
-    public void applyLeftBehindAnimation(float value) {
+    public void applyLeftBehindViewAnimation(float value) {
 
     }
 }

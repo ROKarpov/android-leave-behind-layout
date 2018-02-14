@@ -118,7 +118,7 @@ public abstract class AbstractInteractionParameters implements InteractionParame
     }
 
     @Override
-    public void applyLeftBehindAnimation(float value) {
+    public void applyLeftBehindViewAnimation(float value) {
         mLeftBehindViewAnimation.apply(mLeftBehindView, value);
     }
 }
