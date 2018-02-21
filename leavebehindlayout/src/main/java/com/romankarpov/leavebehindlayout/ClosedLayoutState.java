@@ -14,7 +14,7 @@ class ClosedLayoutState implements LeaveBehindLayoutState {
     @Override
     public void applyLayout(LeaveBehindLayout layout) {
         LeaveBehindLayoutConfig config = layout.getConfig();
-        config.trySetOffset(config.getClosedPositionX(), config.getClosedPositionY());
+        config.applyOffset(config.getClosedPosition());
         layout.invalidate();
     }
 

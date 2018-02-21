@@ -89,54 +89,17 @@ public class EmptyInteractionParameters implements InteractionParameters {
     }
 
     @Override
-    public float getClosedPositionX() {
-        return 0;
-    }
-    @Override
-    public float getClosedPositionY() {
+    public float getClosedOffset() {
         return 0;
     }
 
     @Override
-    public float getOpenedPositionX() {
-        return 0.f;
-    }
-    @Override
-    public float getOpenedPositionY() {
-        return 0.f;
-    }
-
-    @Override
-    public float getFlyoutPositionX() {
-        return 0.f;
-    }
-    @Override
-    public float getFlyoutPositionY() {
-        return 0.f;
-    }
-
-    @Override
-    public float clipVelocityX(float velocity, float minVelocity, float maxVelocity) {
-        return 0;
-    }
-    @Override
-    public float clipVelocityY(float velocity, float minVelocity, float maxVelocity) {
-        return 0;
-    }
-
-
-    @Override
-    public float getClosedPosition() {
+    public float getOpenedOffset() {
         return 0;
     }
 
     @Override
-    public float getOpenedPosition() {
-        return 0;
-    }
-
-    @Override
-    public float getFlewOutPosition() {
+    public float getFlewOutOffset() {
         return 0;
     }
 
@@ -152,6 +115,11 @@ public class EmptyInteractionParameters implements InteractionParameters {
 
     @Override
     public void applyLeftBehindViewAnimation(float value) {
+
+    }
+
+    @Override
+    public void applyOffset(float offset) {
 
     }
 }

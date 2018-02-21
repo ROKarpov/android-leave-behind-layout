@@ -51,7 +51,7 @@ class FlyoutLayoutState implements LeaveBehindLayoutState {
         public void onAnimationUpdate(DynamicAnimation animation, float value, float velocity) {
             final LeaveBehindLayoutConfig config = mLayout.getConfig();
             final int gravity = config.getLeftBehindGravity();
-            final float progress = config.calculateOpeningProgress();
+            final float progress = config.calculateFlyingOutProgress();
             mLayout.dispatchFlyingOut(gravity, progress);
         }
     }

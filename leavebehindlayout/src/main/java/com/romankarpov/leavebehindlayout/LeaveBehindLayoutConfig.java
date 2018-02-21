@@ -68,39 +68,17 @@ final class LeaveBehindLayoutConfig {
 
     public int getLeftBehindGravity() { return mCurrentOpeningParameters.getLeftBehindGravity(); }
 
-    public float getCurrentPositionX() {
-        return mCurrentOpeningParameters.getCurrentPositionX();
+    public void applyOffset(float offset) {
+        mCurrentOpeningParameters.applyOffset(offset);
     }
-    public float getCurrentPositionY() {
-        return mCurrentOpeningParameters.getCurrentPositionY();
-    }
-    public float getClosedPositionX() {
-        return mCurrentOpeningParameters.getClosedPositionX();
-    }
-    public float getClosedPositionY() {
-        return mCurrentOpeningParameters.getClosedPositionY();
-    }
-    public float getOpenedPositionX() {
-        return mCurrentOpeningParameters.getOpenedPositionX();
-    }
-    public float getOpenedPositionY() {
-        return mCurrentOpeningParameters.getOpenedPositionY();
-    }
-    public float getFlyoutPositionX() {
-        return mCurrentOpeningParameters.getFlyoutPositionX();
-    }
-    public float getFlyoutPositionY() {
-        return mCurrentOpeningParameters.getFlyoutPositionY();
-    }
-
     public float getClosedPosition() {
-        return mCurrentOpeningParameters.getClosedPosition();
+        return mCurrentOpeningParameters.getClosedOffset();
     }
     public float getOpenedPosition() {
-        return mCurrentOpeningParameters.getOpenedPosition();
+        return mCurrentOpeningParameters.getOpenedOffset();
     }
     public float getFlewOutPosition() {
-        return mCurrentOpeningParameters.getFlewOutPosition();
+        return mCurrentOpeningParameters.getFlewOutOffset();
     }
     public DynamicAnimation.ViewProperty getAnimatedProperty() {
         return mCurrentOpeningParameters.getAnimatedProperty();
@@ -114,8 +92,6 @@ final class LeaveBehindLayoutConfig {
     public float calculateFlyingOutProgress() {
         return mCurrentOpeningParameters.calculateFlyingOutProgress();
     }
-
-
 
     public boolean isPointInForeView(float x, float y) {
         View foreView = mCurrentOpeningParameters.getForeView();
@@ -333,14 +309,6 @@ final class LeaveBehindLayoutConfig {
         } else {
             return false;
         }
-    }
-
-    public float clipVelocityX(float velocityX) {
-        return mCurrentOpeningParameters.clipVelocityX(velocityX, mMinFlingVelocity, mMaxFlingVelocity);
-    }
-    public float clipVelocityY(float velocityY) {
-        return mCurrentOpeningParameters.clipVelocityY(velocityY, mMinFlingVelocity, mMaxFlingVelocity);
-
     }
 
     public void applyLeftBehindViewAnimation(float value) {

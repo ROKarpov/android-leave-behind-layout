@@ -69,8 +69,8 @@ class DraggingLayoutState implements LeaveBehindLayoutState {
         }
 
         velocityTracker.computeCurrentVelocity(1000);
-        final float velocityX = config.clipVelocityX(velocityTracker.getXVelocity(pointerId));
-        final float velocityY = config.clipVelocityY(velocityTracker.getYVelocity(pointerId));
+        final float velocityX = velocityTracker.getXVelocity(pointerId);
+        final float velocityY = velocityTracker.getYVelocity(pointerId);
 
         LeaveBehindLayoutState nextState = LeaveBehindLayout.CLOSED_STATE;
         if (config.shouldOpen(velocityX, velocityY)) {
@@ -87,7 +87,7 @@ class DraggingLayoutState implements LeaveBehindLayoutState {
     @Override
     public void applyLayout(LeaveBehindLayout layout) {
         LeaveBehindLayoutConfig config = layout.getConfig();
-        config.trySetOffset(config.getFlyoutPositionX(), config.getFlyoutPositionY());
+        config.applyOffset(config.getFlewOutPosition());
         layout.invalidate();
     }
 

@@ -30,40 +30,6 @@ public class LeftInteractionParameters extends AbstractInteractionParameters {
     }
 
     @Override
-    public float getOpenedPositionX() {
-        return getLeftBehindView().getWidth();
-    }
-    @Override
-    public float getOpenedPositionY() {
-        return 0;
-    }
-    @Override
-    public float getFlyoutPositionX() {
-        return getForeView().getWidth();
-    }
-    @Override
-    public float getFlyoutPositionY() {
-        return 0;
-    }
-
-    @Override
-    public float clipOffsetX(float offset) {
-        return offset;
-    }
-    @Override
-    public float clipOffsetY(float offset) {
-        return 0;
-    }
-    @Override
-    public float clipVelocityX(float velocity, float minVelocity, float maxVelocity) {
-        return clipVelocity(velocity, minVelocity, maxVelocity);
-    }
-    @Override
-    public float clipVelocityY(float velocity, float minVelocity, float maxVelocity) {
-        return 0;
-    }
-
-    @Override
     public boolean isInteractionStarted(float dx, float dy, float absDx, float absDy, float touchSlop) {
         return (absDx >= absDy) && (absDx > touchSlop) && (dx > 0);
     }
@@ -89,15 +55,15 @@ public class LeftInteractionParameters extends AbstractInteractionParameters {
     }
 
     @Override
-    public float getClosedPosition() {
+    public float getClosedOffset() {
         return 0;
     }
     @Override
-    public float getOpenedPosition() {
+    public float getOpenedOffset() {
         return getLeftBehindView().getWidth();
     }
     @Override
-    public float getFlewOutPosition() {
+    public float getFlewOutOffset() {
         return getForeView().getWidth();
     }
     @Override

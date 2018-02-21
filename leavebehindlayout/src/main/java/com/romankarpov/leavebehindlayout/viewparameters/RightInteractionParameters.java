@@ -56,49 +56,15 @@ public class RightInteractionParameters extends AbstractInteractionParameters {
     }
 
     @Override
-    public float clipOffsetX(float offset) {
-        return offset;
-    }
-    @Override
-    public float clipOffsetY(float offset) {
+    public float getClosedOffset() {
         return 0;
     }
     @Override
-    public float clipVelocityX(float velocity, float minVelocity, float maxVelocity) {
-        return clipVelocity(velocity, minVelocity, maxVelocity);
-    }
-    @Override
-    public float clipVelocityY(float velocity, float minVelocity, float maxVelocity) {
-        return 0;
-    }
-
-    @Override
-    public float getOpenedPositionX() {
+    public float getOpenedOffset() {
         return -getLeftBehindView().getWidth();
     }
     @Override
-    public float getOpenedPositionY() {
-        return 0;
-    }
-    @Override
-    public float getFlyoutPositionX() {
-        return -getForeView().getWidth();
-    }
-    @Override
-    public float getFlyoutPositionY() {
-        return 0;
-    }
-
-    @Override
-    public float getClosedPosition() {
-        return 0;
-    }
-    @Override
-    public float getOpenedPosition() {
-        return -getLeftBehindView().getWidth();
-    }
-    @Override
-    public float getFlewOutPosition() {
+    public float getFlewOutOffset() {
         return -getForeView().getWidth();
     }
     @Override

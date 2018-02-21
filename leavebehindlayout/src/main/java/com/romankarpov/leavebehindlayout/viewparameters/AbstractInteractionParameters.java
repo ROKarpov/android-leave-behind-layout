@@ -2,8 +2,10 @@ package com.romankarpov.leavebehindlayout.viewparameters;
 
 import org.jetbrains.annotations.NotNull;
 
+import android.support.animation.DynamicAnimation;
 import android.support.v4.view.ViewCompat;
 import android.view.Gravity;
+import android.view.VelocityTracker;
 import android.view.View;
 
 
@@ -56,23 +58,20 @@ public abstract class AbstractInteractionParameters implements InteractionParame
     }
 
     public abstract boolean areOffsetsApplicable(float offsetX, float offsetY);
+
+    @Override
+    public void applyOffset(float offset) {
+        getAnimatedProperty().setValue(this.getForeView(), offset);
+        mLeftBehindViewAnimation.apply(mLeftBehindView, offset);
+    }
+
     public void applyOffset(float offsetX, float offsetY) {
         final float offset = selectOffset(offsetX, offsetY);
-        getAnimatedProperty().setValue(this.getForeView(), offset);
-//        ViewCompat.setTranslationX(this.getForeView(), this.clipOffsetX(offsetX));
-//        ViewCompat.setTranslationY(this.getForeView(), this.clipOffsetY(offsetY));
-
-        final float progress = this.calculateOpeningProgress();
-        mLeftBehindViewAnimation.apply(mLeftBehindView, offset);
+        applyOffset(offset);
     }
 
     public abstract float calculateOpeningProgress();
     public abstract float calculateFlyingOutProgress();
-
-    protected abstract float clipOffsetX(float offset);
-    protected abstract float clipOffsetY(float offset);
-    public abstract float clipVelocityX(float velocity, float minVelocity, float maxVelocity);
-    public abstract float clipVelocityY(float velocity, float minVelocity, float maxVelocity);
 
     public float getCurrentPositionX() {
         return mForeView.getTranslationX();
@@ -80,20 +79,6 @@ public abstract class AbstractInteractionParameters implements InteractionParame
     public float getCurrentPositionY() {
         return mForeView.getTranslationY();
     }
-
-    public float getClosedPositionX() {
-        return 0.f;
-    }
-    public float getClosedPositionY() {
-        return 0.f;
-    }
-
-    public abstract float getOpenedPositionX();
-    public abstract float getOpenedPositionY();
-
-    public abstract float getFlyoutPositionX();
-    public abstract float getFlyoutPositionY();
-
 
     // To prevent multiple abs values calculations, they are also passed.
     public abstract boolean isInteractionStarted(float dx, float dy, float absDx, float absDy, float touchSlop);
@@ -109,16 +94,14 @@ public abstract class AbstractInteractionParameters implements InteractionParame
         return mIsFlyoutable;
     }
 
-    protected static float clipVelocity(float velocity, float minVelocity, float maxVelocity) {
-        if ((velocity < minVelocity) && (velocity > -minVelocity)) {
-            return 0;
-        } else {
-            return Math.max(-minVelocity, Math.min(maxVelocity, velocity));
-        }
-    }
-
     @Override
     public void applyLeftBehindViewAnimation(float value) {
         mLeftBehindViewAnimation.apply(mLeftBehindView, value);
     }
+
+    public abstract float getClosedOffset();
+    public abstract float getOpenedOffset();
+    public abstract float getFlewOutOffset();
+    public abstract float getVelocityFrom(VelocityTracker tracker);
+    public abstract DynamicAnimation.ViewProperty getAnimatedProperty();
 }
