@@ -51,9 +51,15 @@ public class EmptyInteractionParameters implements InteractionParameters {
     public boolean isInteractionStarted(float dx, float dy, float absDx, float absDy, float touchSlop) {
         return false;
     }
+
     @Override
-    public boolean areOffsetsApplicable(float offsetX, float offsetY) {
+    public boolean isOffsetApplicable(float offset) {
         return false;
+    }
+
+    @Override
+    public float selectValue(float x, float y) {
+        return 0;
     }
 
     @Override
@@ -75,34 +81,21 @@ public class EmptyInteractionParameters implements InteractionParameters {
     }
 
     @Override
-    public void applyOffset(float offsetX, float offsetY) {
-
-    }
-
-    @Override
-    public float getCurrentPositionX() {
-        return 0;
-    }
-    @Override
-    public float getCurrentPositionY() {
-        return 0;
-    }
-
-    @Override
     public float getClosedOffset() {
         return 0;
     }
-
     @Override
     public float getOpenedOffset() {
         return 0;
     }
-
     @Override
     public float getFlewOutOffset() {
         return 0;
     }
-
+    @Override
+    public float getCurrentOffset() {
+        return 0;
+    }
     @Override
     public float getVelocityFrom(VelocityTracker tracker) {
         return 0;

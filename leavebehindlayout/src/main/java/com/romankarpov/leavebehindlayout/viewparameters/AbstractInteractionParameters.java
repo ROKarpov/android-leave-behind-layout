@@ -57,46 +57,32 @@ public abstract class AbstractInteractionParameters implements InteractionParame
         mLeftBehindView.setVisibility(View.VISIBLE);
     }
 
-    public abstract boolean areOffsetsApplicable(float offsetX, float offsetY);
-
     @Override
     public void applyOffset(float offset) {
         getAnimatedProperty().setValue(this.getForeView(), offset);
-        mLeftBehindViewAnimation.apply(mLeftBehindView, offset);
+        if (mIsOpenable) {
+            mLeftBehindViewAnimation.apply(mLeftBehindView, offset);
+        }
     }
 
-    public void applyOffset(float offsetX, float offsetY) {
-        final float offset = selectOffset(offsetX, offsetY);
-        applyOffset(offset);
+    @Override
+    public void applyLeftBehindViewAnimation(float value) {
+        mLeftBehindViewAnimation.apply(mLeftBehindView, value);
     }
 
     public abstract float calculateOpeningProgress();
     public abstract float calculateFlyingOutProgress();
-
-    public float getCurrentPositionX() {
-        return mForeView.getTranslationX();
-    }
-    public float getCurrentPositionY() {
-        return mForeView.getTranslationY();
-    }
 
     // To prevent multiple abs values calculations, they are also passed.
     public abstract boolean isInteractionStarted(float dx, float dy, float absDx, float absDy, float touchSlop);
     public abstract boolean shouldOpen(float velocityX, float velocityY, float progressThreshold);
     public abstract boolean shouldFlyout(float velocityX, float velocityY, float progressThreshold);
 
-    protected abstract float selectOffset(float offsetX, float offsetY);
-
     protected boolean isOpenable() {
         return mIsOpenable;
     }
     protected boolean isFlyoutable() {
         return mIsFlyoutable;
-    }
-
-    @Override
-    public void applyLeftBehindViewAnimation(float value) {
-        mLeftBehindViewAnimation.apply(mLeftBehindView, value);
     }
 
     public abstract float getClosedOffset();

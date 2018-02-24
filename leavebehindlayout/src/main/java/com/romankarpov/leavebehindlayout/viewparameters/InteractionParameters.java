@@ -20,23 +20,22 @@ public interface InteractionParameters {
 
     // To prevent multiple abs values calculations, they are also passed.
     boolean isInteractionStarted(float dx, float dy, float absDx, float absDy, float touchSlop);
-    boolean areOffsetsApplicable(float offsetX, float offsetY);
+    boolean isOffsetApplicable(float offset);
 
     boolean shouldOpen(float velocityX, float velocityY, float progressThreshold);
     boolean shouldFlyout(float velocityX, float velocityY, float progressThreshold);
 
-    void applyOffset(float offsetX, float offsetY);
     float calculateOpeningProgress();
     float calculateFlyingOutProgress();
-
-    float getCurrentPositionX();
-    float getCurrentPositionY();
 
     void applyOffset(float offset);
     float getClosedOffset();
     float getOpenedOffset();
+    float getCurrentOffset();
     float getFlewOutOffset();
     float getVelocityFrom(VelocityTracker tracker);
     DynamicAnimation.ViewProperty getAnimatedProperty();
     void applyLeftBehindViewAnimation(float value);
+
+    float selectValue(float x, float y);
 }

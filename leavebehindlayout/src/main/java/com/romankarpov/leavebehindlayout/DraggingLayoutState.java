@@ -43,10 +43,8 @@ class DraggingLayoutState implements LeaveBehindLayoutState {
         final float dx = newX - layout.getMotionLastX();
         final float dy = newY - layout.getMotionLastY();
 
-        if (!config.tryAppendOffset(dx, dy)) {
-            config.switchOpeningParametersToOpposite(dx, dy);
-            config.tryAppendOffset(dx, dy);
-        }
+        config.appendOffset(dx, dy);
+
         layout.getVelocityTracker().addMovement(event);
         layout.updateLastPosition(newX, newY);
         layout.invalidate();
@@ -63,10 +61,7 @@ class DraggingLayoutState implements LeaveBehindLayoutState {
         final float dx = newX - layout.getMotionLastX();
         final float dy = newY - layout.getMotionLastY();
 
-        if (!config.tryAppendOffset(dx, dy)) {
-            config.switchOpeningParametersToOpposite(dx, dy);
-            config.tryAppendOffset(dx, dy);
-        }
+        config.appendOffset(dx, dy);
 
         velocityTracker.computeCurrentVelocity(1000);
         final float velocityX = velocityTracker.getXVelocity(pointerId);

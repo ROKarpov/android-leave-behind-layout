@@ -34,9 +34,10 @@ public class TopInteractionParameters extends AbstractInteractionParameters {
         return (absDy > absDx) && (absDy >= touchSlop) && (dy > 0);
     }
     @Override
-    public boolean areOffsetsApplicable(float offsetX, float offsetY) {
-        return offsetY >= 0;
+    public boolean isOffsetApplicable(float offset) {
+        return offset >= 0;
     }
+
     @Override
     public boolean shouldOpen(float velocityX, float velocityY, float progressThreshold) {
         final float openProgress = calculateOpeningProgress();
@@ -64,6 +65,10 @@ public class TopInteractionParameters extends AbstractInteractionParameters {
         return getLeftBehindView().getHeight();
     }
     @Override
+    public float getCurrentOffset() {
+        return getForeView().getTranslationY();
+    }
+    @Override
     public float getFlewOutOffset() {
         return getForeView().getHeight();
     }
@@ -75,9 +80,9 @@ public class TopInteractionParameters extends AbstractInteractionParameters {
     public DynamicAnimation.ViewProperty getAnimatedProperty() {
         return DynamicAnimation.TRANSLATION_Y;
     }
-
     @Override
-    protected float selectOffset(float offsetX, float offsetY) {
-        return offsetY;
+    public float selectValue(float x, float y) {
+        return y;
     }
+
 }

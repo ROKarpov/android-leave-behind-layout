@@ -177,32 +177,6 @@ final class LeaveBehindLayoutConfig {
         }
         return false;
     }
-
-    public void showLeftBehindView() {
-        mCurrentOpeningParameters.showLeftBehindView();
-    }
-    public void hideLeftBehindView() {
-        mCurrentOpeningParameters.hideLeftBehindView();
-    }
-
-
-    public void switchOpeningParametersToOpposite(float dx, float dy) {
-        Integer oppositeGravity = EMPTY_OPENING_GRAVITY;
-        switch (mCurrentOpeningGravity) {
-            case Gravity.LEFT: oppositeGravity = Gravity.RIGHT; break;
-            case Gravity.TOP: oppositeGravity = Gravity.BOTTOM; break;
-            case Gravity.RIGHT: oppositeGravity = Gravity.LEFT; break;
-            case Gravity.BOTTOM: oppositeGravity = Gravity.TOP; break;
-            case Gravity.NO_GRAVITY: setOpeningParametersByOffset(dx, dy); return;
-        }
-
-        mCurrentOpeningParameters.hideLeftBehindView();
-        final boolean hasOppositeParameters = mAllOpeningParameters.containsKey(oppositeGravity);
-        oppositeGravity = hasOppositeParameters ? oppositeGravity : EMPTY_OPENING_GRAVITY;
-        mCurrentOpeningParameters = mAllOpeningParameters.get(oppositeGravity);
-        mCurrentOpeningGravity = oppositeGravity;
-        mCurrentOpeningParameters.showLeftBehindView();
-    }
     public void resetOpeningParameters() {
         mCurrentOpeningParameters.hideLeftBehindView();
         mCurrentOpeningParameters = mAllOpeningParameters.get(EMPTY_OPENING_GRAVITY);
@@ -247,7 +221,7 @@ final class LeaveBehindLayoutConfig {
                                 String.format(REPEATED_GRAVITY_MSG, getGravityString(absGravity)));
                     }
                     layoutLeftLeaveBehindView(child, lp, layoutLeft, layoutTop, layoutRight, layoutBottom);
-                    interactionParameters = new LeftInteractionParameters(child, lp.gravity, animationProvider.getLeftAnimation(), lp.isOpenable, layout.isFlyoutable(lp.gravity));
+                    interactionParameters = new LeftInteractionParameters(child, lp.gravity, animationProvider.getLeftAnimation(), false/*lp.isOpenable*/, layout.isFlyoutable(lp.gravity));
                     mAllOpeningParameters.put(Gravity.LEFT, interactionParameters);
                     break;
                 case Gravity.TOP:
@@ -297,17 +271,22 @@ final class LeaveBehindLayoutConfig {
         }
     }
 
-    public boolean tryAppendOffset(float offsetX, float offsetY) {
-        final float totalOffsetX = mCurrentOpeningParameters.getCurrentPositionX() + offsetX;
-        final float totalOffsetY = mCurrentOpeningParameters.getCurrentPositionY() + offsetY;
-        return trySetOffset(totalOffsetX, totalOffsetY);
-    }
-    public boolean trySetOffset(float offsetX, float offsetY) {
-        if (mCurrentOpeningParameters.areOffsetsApplicable(offsetX, offsetY)) {
-            mCurrentOpeningParameters.applyOffset(offsetX, offsetY);
-            return true;
+    public void appendOffset(float offsetX, float offsetY) {
+        final float totalOffset = mCurrentOpeningParameters.getCurrentOffset()
+                + mCurrentOpeningParameters.selectValue(offsetX, offsetY);
+
+        if (mCurrentOpeningParameters.isOffsetApplicable(totalOffset)) {
+            mCurrentOpeningParameters.applyOffset(totalOffset);
         } else {
-            return false;
+            final Integer oppositeGravity = getOppositeGravity(mCurrentOpeningGravity);
+            final boolean hasOppositeParameters = mAllOpeningParameters.containsKey(oppositeGravity);
+            if (hasOppositeParameters) {
+                this.switchOpeningParametersToOpposite();
+                mCurrentOpeningParameters.applyOffset(totalOffset);
+            }
+            else {
+                mCurrentOpeningParameters.applyOffset(mCurrentOpeningParameters.getClosedOffset());
+            }
         }
     }
 
@@ -379,5 +358,26 @@ final class LeaveBehindLayoutConfig {
         final int right = left + view.getMeasuredWidth();
         final int top = bottom - view.getMeasuredHeight();
         view.layout(left, top, right, bottom);
+    }
+
+    private void switchOpeningParametersToOpposite() {
+        Integer oppositeGravity = getOppositeGravity(mCurrentOpeningGravity);
+        final boolean hasOppositeParameters = mAllOpeningParameters.containsKey(oppositeGravity);
+        oppositeGravity = hasOppositeParameters ? oppositeGravity : EMPTY_OPENING_GRAVITY;
+
+        mCurrentOpeningParameters.hideLeftBehindView();
+        mCurrentOpeningGravity = oppositeGravity;
+        mCurrentOpeningParameters = mAllOpeningParameters.get(oppositeGravity);
+        mCurrentOpeningParameters.showLeftBehindView();
+    }
+
+    private static Integer getOppositeGravity(Integer gravity) {
+        switch (gravity) {
+            case Gravity.LEFT: return Gravity.RIGHT;
+            case Gravity.TOP: return Gravity.BOTTOM;
+            case Gravity.RIGHT: return Gravity.LEFT;
+            case Gravity.BOTTOM: return Gravity.TOP;
+            default: return EMPTY_OPENING_GRAVITY;
+        }
     }
 }

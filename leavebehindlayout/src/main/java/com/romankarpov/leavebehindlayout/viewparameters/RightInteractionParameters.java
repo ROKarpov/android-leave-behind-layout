@@ -34,8 +34,8 @@ public class RightInteractionParameters extends AbstractInteractionParameters {
         return (absDx >= absDy) && (absDx > touchSlop) && (dx < 0);
     }
     @Override
-    public boolean areOffsetsApplicable(float offsetX, float offsetY) {
-        return offsetX <= 0;
+    public boolean isOffsetApplicable(float offset) {
+        return offset <= 0;
     }
     @Override
     public boolean shouldOpen(float velocityX, float velocityY, float progressThreshold) {
@@ -68,6 +68,10 @@ public class RightInteractionParameters extends AbstractInteractionParameters {
         return -getForeView().getWidth();
     }
     @Override
+    public float getCurrentOffset() {
+        return getForeView().getTranslationX();
+    }
+    @Override
     public float getVelocityFrom(VelocityTracker tracker) {
         return tracker.getXVelocity();
     }
@@ -75,9 +79,8 @@ public class RightInteractionParameters extends AbstractInteractionParameters {
     public DynamicAnimation.ViewProperty getAnimatedProperty() {
         return DynamicAnimation.TRANSLATION_X;
     }
-
     @Override
-    protected float selectOffset(float offsetX, float offsetY) {
-        return offsetX;
+    public float selectValue(float x, float y) {
+        return x;
     }
 }
