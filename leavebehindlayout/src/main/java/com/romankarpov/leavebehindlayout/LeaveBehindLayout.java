@@ -7,6 +7,7 @@ import android.os.Build;
 import android.support.animation.DynamicAnimation;
 import android.support.animation.SpringAnimation;
 import android.support.animation.SpringForce;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -19,10 +20,11 @@ import android.widget.FrameLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.romankarpov.leavebehindlayout.leavebehindviewanimations.LeftBehindViewAnimationProvider;
-import com.romankarpov.leavebehindlayout.leavebehindviewanimations.EmptyLeftBehindAnimationProvider;
-import com.romankarpov.leavebehindlayout.leavebehindviewanimations.SlideLeftBehindViewAnimationProvider;
-
+import com.romankarpov.leavebehindlayout.core.InteractionModel;
+import com.romankarpov.leavebehindlayout.core.InteractionModelsBuilder;
+import com.romankarpov.leavebehindlayout.animations.LeftBehindViewAnimation;
+import com.romankarpov.leavebehindlayout.stateselectors.DefaultStateSelector;
+import com.romankarpov.leavebehindlayout.stateselectors.StateSelector;
 
 public class LeaveBehindLayout extends ViewGroup {
     private static int DEFAULT_FLYOUTABLE_SIDES =
@@ -32,35 +34,38 @@ public class LeaveBehindLayout extends ViewGroup {
             | Gravity.RIGHT
             | Gravity.END
             | Gravity.BOTTOM;
-    private static LeftBehindViewAnimationProvider DEFAULT_ANIMATION_PROVIDER = SlideLeftBehindViewAnimationProvider.get();
 
     public static final int FLAG_CLOSED = 0;
-    static final LeaveBehindLayoutState CLOSED_STATE = new ClosedLayoutState();
+    public static final LeaveBehindLayoutState CLOSED_STATE = new ClosedLayoutState();
     public static final int FLAG_DRAGGING = 1;
-    static final LeaveBehindLayoutState DRAGGING_STATE = new DraggingLayoutState();
+    public static final LeaveBehindLayoutState DRAGGING_STATE = new DraggingLayoutState();
     public static final int FLAG_OPENED = 2;
-    static final LeaveBehindLayoutState OPENED_STATE = new OpenedLayoutState();
+    public static final LeaveBehindLayoutState OPENED_STATE = new OpenedLayoutState();
     public static final int FLAG_FLYOUT = 4;
-    static final LeaveBehindLayoutState FLYOUT_STATE = new FlyoutLayoutState();
+    public static final LeaveBehindLayoutState FLYOUT_STATE = new FlyoutLayoutState();
 
-    private LeaveBehindLayoutConfig mConfig;
-    private LeftBehindViewAnimationProvider mLeftBehindViewAnimationProvider = DEFAULT_ANIMATION_PROVIDER;
 
+    InteractionModel[] mInteractionModels;
+    InteractionModel mActualInteractionModel;
+
+    private StateSelector mStateSelector;
     private LeaveBehindLayoutState mState;
+    private LeftBehindViewAnimation mLeftBehindViewAnimation;
+
     private VelocityTracker mVelocityTracker;
-//    /*private */PhysicsAnimator mPhysicsAnimator;
     private DynamicAnimation mAnimation;
 
     private int mFlyoutableFlags;
     private final List<Listener> mListeners = new ArrayList<>(1);
 
-    private boolean mIsAnimated;
     private boolean mIsInterceptingTouchEvent;
     private int mActionIndex;
     private float mMotionInitialX;
     private float mMotionInitialY;
     private float mMotionLastX;
     private float mMotionLastY;
+
+    private int mTouchSlop;
     // It here for memory optimization.
     private final List<View> mMatchParentChildren = new ArrayList<>(1);
 
@@ -122,8 +127,15 @@ public class LeaveBehindLayout extends ViewGroup {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         if (changed) {
-            mConfig.initialize(this, l, t, r, b);
-            this.bringChildToFront(mConfig.getForeView());
+            final int layoutLeft = getPaddingLeft();
+            final int layoutTop = getPaddingTop();
+            final int layoutRight = r - l - getPaddingRight();
+            final int layoutBottom = b - t - getPaddingBottom();
+
+            for (int i = 0; i < mInteractionModels.length; ++i) {
+                mInteractionModels[i].layout(layoutLeft, layoutTop, layoutRight, layoutBottom);
+            }
+            bringChildToFront(mActualInteractionModel.getForeView());
             mState.applyLayout(this);
         }
     }
@@ -160,8 +172,8 @@ public class LeaveBehindLayout extends ViewGroup {
         }
 
         // Account for padding too
-        maxWidth += this.getPaddingLeft() + this.getPaddingRight();
-        maxHeight += this.getPaddingTop() + this.getPaddingBottom();
+        maxWidth += getPaddingLeft() + getPaddingRight();
+        maxHeight += getPaddingTop() + getPaddingBottom();
 
         // Check against our minimum height and width
         maxHeight = Math.max(maxHeight, getSuggestedMinimumHeight());
@@ -180,13 +192,13 @@ public class LeaveBehindLayout extends ViewGroup {
                 final int childWidthMeasureSpec;
                 if (lp.width == FrameLayout.LayoutParams.MATCH_PARENT) {
                     final int width = Math.max(0, getMeasuredWidth()
-                            - this.getPaddingLeft() - this.getPaddingRight()
+                            - getPaddingLeft() - getPaddingRight()
                             - lp.leftMargin - lp.rightMargin);
                     childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(
                             width, MeasureSpec.EXACTLY);
                 } else {
                     childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec,
-                            this.getPaddingLeft() + this.getPaddingRight() +
+                            getPaddingLeft() + getPaddingRight() +
                                     lp.leftMargin + lp.rightMargin,
                             lp.width);
                 }
@@ -194,13 +206,13 @@ public class LeaveBehindLayout extends ViewGroup {
                 final int childHeightMeasureSpec;
                 if (lp.height == FrameLayout.LayoutParams.MATCH_PARENT) {
                     final int height = Math.max(0, getMeasuredHeight()
-                            - this.getPaddingTop() - this.getPaddingBottom()
+                            - getPaddingTop() - getPaddingBottom()
                             - lp.topMargin - lp.bottomMargin);
                     childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(
                             height, MeasureSpec.EXACTLY);
                 } else {
                     childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec,
-                            this.getPaddingTop() + this.getPaddingBottom() +
+                            getPaddingTop() + getPaddingBottom() +
                                     lp.topMargin + lp.bottomMargin,
                             lp.height);
                 }
@@ -208,103 +220,74 @@ public class LeaveBehindLayout extends ViewGroup {
                 child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
             }
         }
+
+        final int layoutDirection = ViewCompat.getLayoutDirection(this);
+
+        count = getChildCount();
+        InteractionModelsBuilder builder = new InteractionModelsBuilder()
+                .forLayout(this);
+        for(int i = 0; i < count; ++i) {
+            builder.fillFromView(getChildAt(i), layoutDirection);
+        }
+        final int flyoutableFlags = getFlyoutableFlags();
+        builder.fillFlyoutableIfExists(flyoutableFlags, Gravity.TOP, layoutDirection)
+                .fillFlyoutableIfExists(flyoutableFlags, Gravity.BOTTOM, layoutDirection)
+                .fillFlyoutableIfExists(flyoutableFlags, Gravity.START, layoutDirection)
+                .fillFlyoutableIfExists(flyoutableFlags, Gravity.END, layoutDirection);
+        mInteractionModels = builder.build();
+        if (mInteractionModels.length > 0) {
+            mActualInteractionModel = mInteractionModels[0];
+        }
     }
     //endregion
 
     //region Layout-specific methods.
     public void openLeftBehind(int gravity) {
-        this.openLeftBehind(gravity, true);
+        openLeftBehind(gravity, true);
     }
     public void openLeftBehind(View view) {
-        this.openLeftBehind(view, true);
+        openLeftBehind(view, true);
     }
     public void openLeftBehind(int gravity, boolean isAnimated) {
-        if (mConfig.setOpeningParametersByGravity(gravity)) {
-            this.setState(LeaveBehindLayout.OPENED_STATE);
+        if (setActualInteractionModelByGravity(gravity)) {
+            setState(LeaveBehindLayout.OPENED_STATE);
             if (isAnimated) {
-                this.startAnimationToCurrentState();
+                startAnimationToCurrentState();
             } else {
-                this.mState.applyLayout(this);
+                mState.applyLayout(this);
             }
         }
     }
     public void openLeftBehind(View view, boolean isAnimated) {
-        if (mConfig.setOpeningParametersByView(view)) {
-            this.setState(LeaveBehindLayout.OPENED_STATE);
+        if (setActualInteractionModelByView(view)) {
+            setState(LeaveBehindLayout.OPENED_STATE);
             if (isAnimated) {
-                this.startAnimationToCurrentState();
+                startAnimationToCurrentState();
             } else {
-                this.mState.applyLayout(this);
+                mState.applyLayout(this);
             }
         }
     }
     public void closeLeftBehind() {
-        this.closeLeftBehind(true);
+        closeLeftBehind(true);
     }
     public void closeLeftBehind(boolean isAnimated) {
-        this.setState(LeaveBehindLayout.CLOSED_STATE);
+        setState(LeaveBehindLayout.CLOSED_STATE);
         if (isAnimated) {
-            this.startAnimationToCurrentState();
+            startAnimationToCurrentState();
         } else {
-            this.mState.applyLayout(this);
+            invalidate();
         }
     }
 
-
-    public int getOpenedLeaveBehindGravity() {
-        return getConfig().getLeftBehindGravity();
+    public LeftBehindViewAnimation getLeftBehindViewAnimation() {
+        return mLeftBehindViewAnimation;
+    }
+    void setLeftBehindViewAnimation(LeftBehindViewAnimation leftBehindViewAnimation) {
+        mLeftBehindViewAnimation = leftBehindViewAnimation;
+        // TODO: IMPLEMENT ANIMATION RUNTIME UPDATE IN INTERACTION_MODELS.
     }
 
-    public int getFlyoutableFlags() {
-        return mFlyoutableFlags;
-    }
-
-    public void setFlyoutableFlags(int flyoutableFlags) {
-        mFlyoutableFlags = flyoutableFlags;
-    }
-
-    public boolean isFlyoutable(int sideGravity) {
-        return (mFlyoutableFlags & sideGravity) == sideGravity;
-    }
-
-    LeaveBehindLayoutConfig getConfig() {
-        return mConfig;
-    }
-    VelocityTracker getVelocityTracker() {
-        return mVelocityTracker;
-    }
-
-    public LeftBehindViewAnimationProvider getLeftBehindViewAnimationProvider() {
-        return mLeftBehindViewAnimationProvider;
-    }
-    void startAnimationToCurrentState() {
-        endAnimation();
-        float finalPosition = this.mState.getFinalPositionFrom(this.mConfig);
-
-        float startVelocoty = mVelocityTracker != null
-                ? mConfig.getVelocityFrom(mVelocityTracker)
-                : 0f;
-        DynamicAnimation.ViewProperty animatedProperty = mConfig.getAnimatedProperty();
-
-        final SpringForce force = new SpringForce();
-        force.setFinalPosition(finalPosition)
-                .setStiffness(SpringForce.STIFFNESS_MEDIUM)
-                .setDampingRatio(SpringForce.DAMPING_RATIO_NO_BOUNCY);
-        final SpringAnimation animation = new SpringAnimation(this.mConfig.getForeView(), animatedProperty);
-        animation.setSpring(force);
-        animation.setStartVelocity(startVelocoty);
-        animation.addUpdateListener(this.mState.getAnimationUpdateListener(this));
-        animation.addEndListener(this.mState.getAnimationEndListener(this));
-        mAnimation = animation;
-        mAnimation.start();
-    }
-
-    void endAnimation() {
-        if (mAnimation != null) {
-            mAnimation.cancel();
-            mAnimation = null;
-        }
-    }
 
     LeaveBehindLayoutState getState() {
         return mState;
@@ -313,6 +296,98 @@ public class LeaveBehindLayout extends ViewGroup {
         if ((state == null) || (mState == state)) return;
         mState = state;
         dispatchStateChanged(mState.getFlag());
+    }
+
+    public int getOpenedLeftBehindGravity() {
+        return mActualInteractionModel.getGravity();
+    }
+
+    public StateSelector getStateSelector() {
+        return mStateSelector;
+    }
+    public void setStateSelector(StateSelector stateSelector) {
+        mStateSelector = stateSelector;
+    }
+
+    public int getFlyoutableFlags() {
+        return mFlyoutableFlags;
+    }
+    public void setFlyoutableFlags(int flyoutableFlags) {
+        mFlyoutableFlags = flyoutableFlags;
+    }
+    public boolean isFlyoutable(int sideGravity) {
+        return (mFlyoutableFlags & sideGravity) == sideGravity;
+    }
+
+
+    public InteractionModel getActualInteractionModel() {
+        return mActualInteractionModel;
+    }
+    // FOR INTERNAL USE ONLY!
+    public boolean setActualInteractionModel(InteractionModel actualInteractionModel) {
+        mActualInteractionModel.endInteraction();
+        mActualInteractionModel = actualInteractionModel;
+        mActualInteractionModel.startInteraction();
+        return true;
+    }
+    public boolean setActualInteractionModelByGravity(int gravity) {
+        for (int i = 0; i < mInteractionModels.length; ++i) {
+            if (mInteractionModels[i].getGravity() == gravity) {
+                return setActualInteractionModel(mInteractionModels[i]);
+            }
+        }
+        return false;
+    }
+    public boolean setActualInteractionModelByView(View view) {
+        for (int i = 0; i < mInteractionModels.length; ++i) {
+            if (mInteractionModels[i].getLeftBehindView() == view) {
+                return setActualInteractionModel(mInteractionModels[i]);
+            }
+        }
+        return false;
+    }
+    public boolean setActualInteractionModelByOffset(float dx, float dy) {
+        final float absDx = Math.abs(dx);
+        final float absDy = Math.abs(dy);
+
+        for (int i = 0; i < mInteractionModels.length; ++i) {
+            if (mInteractionModels[i].isInteractionStarted(dx, dy, absDx, absDy)) {
+                return setActualInteractionModel(mInteractionModels[i]);
+            }
+        }
+        return false;
+    }
+
+    void startAnimationToCurrentState() {
+        endAnimation();
+        float finalPosition = mState.getFinalPositionFrom(mActualInteractionModel);
+
+        float startVelocoty = mVelocityTracker != null
+                ? mActualInteractionModel.getVelocityFrom(mVelocityTracker)
+                : 0f;
+        DynamicAnimation.ViewProperty animatedProperty = mActualInteractionModel.getAnimatedProperty();
+
+        final SpringForce force = new SpringForce();
+        force.setFinalPosition(finalPosition)
+                .setStiffness(SpringForce.STIFFNESS_MEDIUM)
+                .setDampingRatio(SpringForce.DAMPING_RATIO_NO_BOUNCY);
+        final SpringAnimation animation = new SpringAnimation(mActualInteractionModel.getForeView(), animatedProperty);
+        animation.setSpring(force);
+        animation.setStartVelocity(startVelocoty);
+        animation.addUpdateListener(mState.getAnimationUpdateListener(this));
+        animation.addEndListener(mState.getAnimationEndListener(this));
+        mAnimation = animation;
+        mAnimation.start();
+    }
+    void endAnimation() {
+        if (mAnimation != null) {
+            mAnimation.cancel();
+            mAnimation = null;
+        }
+    }
+
+    VelocityTracker getVelocityTracker() {
+        return mVelocityTracker;
     }
 
     public boolean isEventTracked() {
@@ -357,6 +432,8 @@ public class LeaveBehindLayout extends ViewGroup {
     float getMotionLastY() {
         return mMotionLastY;
     }
+
+    int getTouchSlop() { return mTouchSlop; }
     //endregion
 
     //region listeners API
@@ -404,11 +481,10 @@ public class LeaveBehindLayout extends ViewGroup {
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         final ViewConfiguration vc = ViewConfiguration.get(context);
-        final int touchSlop = vc.getScaledTouchSlop();
-        final int maxFlingVelocity = vc.getScaledMaximumFlingVelocity();
-        final int minFlingVelocity = vc.getScaledMinimumFlingVelocity();
+        mTouchSlop = vc.getScaledTouchSlop();
+        int maxFlingVelocity = vc.getScaledMaximumFlingVelocity();
+        int minFlingVelocity = vc.getScaledMinimumFlingVelocity();
 
-        mConfig = new LeaveBehindLayoutConfig(touchSlop, minFlingVelocity, maxFlingVelocity);
         mState = LeaveBehindLayout.CLOSED_STATE;
 
         TypedArray a = context.getTheme().obtainStyledAttributes(
@@ -416,6 +492,14 @@ public class LeaveBehindLayout extends ViewGroup {
                 R.styleable.LeaveBehindLayout,
                 defStyleAttr, defStyleRes);
         mFlyoutableFlags = a.getInt(R.styleable.LeaveBehindLayout_flyoutableSides, DEFAULT_FLYOUTABLE_SIDES);
+
+        final int animationFlag = a.getInt(
+                R.styleable.LeaveBehindLayout_leftBehindViewAnimation,
+                AnimationHelper.DEFAULT_ANIMATION);
+        mLeftBehindViewAnimation = AnimationHelper.getAnimation(animationFlag);
+
+        mStateSelector = new DefaultStateSelector(minFlingVelocity, maxFlingVelocity);
+
         a.recycle();
     }
 
@@ -452,16 +536,20 @@ public class LeaveBehindLayout extends ViewGroup {
 
         public LayoutParams(int width, int height, int gravity, boolean isOpenable) {
             super(width, height);
-            this.gravity = gravity;
-            this.isOpenable = isOpenable;
+            gravity = gravity;
+            isOpenable = isOpenable;
         }
 
         public LayoutParams(MarginLayoutParams source) {
             super(source);
+            gravity = DEFAULT_GRAVITY;
+            isOpenable = DEFAULT_IS_OPENABLE;
         }
 
         public LayoutParams(ViewGroup.LayoutParams source) {
             super(source);
+            gravity = DEFAULT_GRAVITY;
+            isOpenable = DEFAULT_IS_OPENABLE;
         }
     }
 

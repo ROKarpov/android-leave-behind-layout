@@ -4,6 +4,8 @@ import android.support.animation.DynamicAnimation;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 
+import com.romankarpov.leavebehindlayout.core.InteractionModel;
+
 
 class DraggingLayoutState implements LeaveBehindLayoutState {
     @Override
@@ -35,44 +37,39 @@ class DraggingLayoutState implements LeaveBehindLayoutState {
     }
 
     boolean handleMove(LeaveBehindLayout layout, MotionEvent event) {
-        final LeaveBehindLayoutConfig config = layout.getConfig();
+        final InteractionModel model = layout.getActualInteractionModel();
+
         final int actionIndex = layout.getActionIndex();
         final int pointerId = event.getPointerId(actionIndex);
         final float newX = event.getX(pointerId);
         final float newY = event.getY(pointerId);
         final float dx = newX - layout.getMotionLastX();
         final float dy = newY - layout.getMotionLastY();
-
-        config.appendOffset(dx, dy);
+        final float offset = model.selectValue(dx, dy);
+        model.appendOffset(offset);
 
         layout.getVelocityTracker().addMovement(event);
         layout.updateLastPosition(newX, newY);
-        layout.invalidate();
+
         return true;
     }
 
     boolean handleUp(LeaveBehindLayout layout, MotionEvent event) {
-        final LeaveBehindLayoutConfig config = layout.getConfig();
-        final VelocityTracker velocityTracker = layout.getVelocityTracker();
+        final InteractionModel model = layout.getActualInteractionModel();
 
         final int pointerId = event.getPointerId(layout.getActionIndex());
         final float newX = event.getX(pointerId);
         final float newY = event.getY(pointerId);
         final float dx = newX - layout.getMotionLastX();
         final float dy = newY - layout.getMotionLastY();
+        final float offset = model.selectValue(dx, dy);
+        model.appendOffset(offset);
 
-        config.appendOffset(dx, dy);
-
+        final VelocityTracker velocityTracker = layout.getVelocityTracker();
         velocityTracker.computeCurrentVelocity(1000);
-        final float velocityX = velocityTracker.getXVelocity(pointerId);
-        final float velocityY = velocityTracker.getYVelocity(pointerId);
+        final float velocity = model.getVelocityFrom(velocityTracker);
+        final LeaveBehindLayoutState nextState = layout.getStateSelector().selectState(model, velocity);
 
-        LeaveBehindLayoutState nextState = LeaveBehindLayout.CLOSED_STATE;
-        if (config.shouldOpen(velocityX, velocityY)) {
-            nextState = LeaveBehindLayout.OPENED_STATE;
-        } else if (config.shouldFlyout(velocityX, velocityY)) {
-            nextState = LeaveBehindLayout.FLYOUT_STATE;
-        }
         layout.setState(nextState);
         layout.startAnimationToCurrentState();
         layout.endTrackEvent();
@@ -81,13 +78,13 @@ class DraggingLayoutState implements LeaveBehindLayoutState {
 
     @Override
     public void applyLayout(LeaveBehindLayout layout) {
-        LeaveBehindLayoutConfig config = layout.getConfig();
+        InteractionModel config = layout.getActualInteractionModel();
         config.applyOffset(config.getFlewOutPosition());
         layout.invalidate();
     }
 
     @Override
-    public float getFinalPositionFrom(LeaveBehindLayoutConfig config) {
+    public float getFinalPositionFrom(InteractionModel model) {
         throw new IllegalStateException("The \'getFinalPositionFrom\' method is not applicable in this state.");
     }
 

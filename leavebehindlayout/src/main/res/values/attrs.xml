@@ -2,16 +2,18 @@
 <resources>
     <declare-styleable name="LeaveBehindLayout">
         <attr name="flyoutableSides">
-            <flag name="left" value="0x03"/>
-            <flag name="right" value="0x05"/>
             <flag name="top" value="0x30"/>
             <flag name="bottom" value="0x50"/>
             <flag name="start" value="0x00800003"/>
             <flag name="end" value="0x00800005"/>
         </attr>
+        <attr name="leftBehindViewAnimation">
+            <flag name="noAnimation" value="0x01"/>
+            <flag name="slide" value="0x02"/>
+        </attr>
     </declare-styleable>
     <declare-styleable name="LeaveBehindLayout_LayoutParams">
         <attr name="layout_openable" format="boolean"/>
-        <attr name="layout_gravity" format="boolean"/>
+        <attr name="layout_gravity" format="integer"/>
     </declare-styleable>
 </resources>

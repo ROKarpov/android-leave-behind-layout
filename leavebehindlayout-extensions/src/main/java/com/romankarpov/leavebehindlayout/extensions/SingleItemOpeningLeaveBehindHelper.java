@@ -39,7 +39,7 @@ class SingleItemOpeningLeaveBehindHelper implements LeaveBehindHelper, LeaveBehi
             case LeaveBehindLayout.FLAG_OPENED:
                 mOpenedItem = holder;
                 mOpenedItemPosition = holder.getAdapterPosition();
-                mOpenedGravity = holder.getLeaveBehindLayout().getOpenedLeaveBehindGravity();
+                mOpenedGravity = holder.getLeaveBehindLayout().getOpenedLeftBehindGravity();
                 break;
             case LeaveBehindLayout.FLAG_DRAGGING:
                 if ((mOpenedItemPosition != EMPTY_OPENED_ITEM_POSITION)

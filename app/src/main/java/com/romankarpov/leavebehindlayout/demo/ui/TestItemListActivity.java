@@ -43,7 +43,7 @@ public class TestItemListActivity extends AppCompatActivity {
 
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
         mRecyclerView = (RecyclerView)findViewById(R.id.testitem_list);
-        mNamesService = ((NamesApplication)this.getApplication())
+        mNamesService = ((NamesApplication)getApplication())
                 .getUiNamesService();
         tryLoadData();
     }
@@ -67,7 +67,7 @@ public class TestItemListActivity extends AppCompatActivity {
     private void setupRecyclerView(List<Contact> contacts) {
         mRecyclerView.setAdapter(new ContactRecyclerViewAdapter(contacts));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(
-                this.getApplicationContext(),
+                getApplicationContext(),
                 DividerItemDecoration.VERTICAL));
     }
 

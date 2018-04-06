@@ -23,13 +23,13 @@ public class Contact {
         return name;
     }
     public void setName(String name) {
-        this.name = name;
+        name = name;
     }
     public String getSurname() {
         return surname;
     }
     public void setSurname(String surname) {
-        this.surname = surname;
+        surname = surname;
     }
     public String getFullName() {
         return String.format("%s %s", name, surname);
@@ -39,55 +39,55 @@ public class Contact {
         return gender;
     }
     public void setGender(String gender) {
-        this.gender = gender;
+        gender = gender;
     }
 
     public String getRegion() {
         return region;
     }
     public void setRegion(String region) {
-        this.region = region;
+        region = region;
     }
 
     public int getAge() {
         return age;
     }
     public void setAge(int age) {
-        this.age = age;
+        age = age;
     }
 
     public String getTitle() {
         return title;
     }
     public void setTitle(String title) {
-        this.title = title;
+        title = title;
     }
 
     public String getPhone() {
         return phone;
     }
     public void setPhone(String phone) {
-        this.phone = phone;
+        phone = phone;
     }
 
     public Date getBirthday() {
         return birthday;
     }
     public void setBirthday(Date birthday) {
-        this.birthday = birthday;
+        birthday = birthday;
     }
 
     public String getEmail() {
         return email;
     }
     public void setEmail(String email) {
-        this.email = email;
+        email = email;
     }
 
     public String getPhotoUri() {
         return photoUri;
     }
     public void setPhotoUri(String photoUri) {
-        this.photoUri = photoUri;
+        photoUri = photoUri;
     }
 }

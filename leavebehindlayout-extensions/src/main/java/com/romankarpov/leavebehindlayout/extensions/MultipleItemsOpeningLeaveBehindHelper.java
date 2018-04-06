@@ -38,7 +38,7 @@ class MultipleItemsOpeningLeaveBehindHelper
             case LeaveBehindLayout.FLAG_OPENED:
                 mOpenedItemPositions.put(
                         holder.getAdapterPosition(),
-                        holder.getLeaveBehindLayout().getOpenedLeaveBehindGravity());
+                        holder.getLeaveBehindLayout().getOpenedLeftBehindGravity());
                 break;
         }
     }

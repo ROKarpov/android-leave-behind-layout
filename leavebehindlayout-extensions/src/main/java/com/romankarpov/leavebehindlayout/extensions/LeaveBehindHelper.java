@@ -39,7 +39,7 @@ public interface LeaveBehindHelper {
         abstract protected LeaveBehindLayout getLeaveBehindLayout();
 
         void onCreateViewHolder() {
-            this.getLeaveBehindLayout().addListener(new LeaveBehindLayoutListener());
+            getLeaveBehindLayout().addListener(new LeaveBehindLayoutListener());
         }
 
         void setListener(Listener listener) {

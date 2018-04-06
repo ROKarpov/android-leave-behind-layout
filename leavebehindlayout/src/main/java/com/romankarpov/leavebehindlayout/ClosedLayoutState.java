@@ -5,6 +5,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.romankarpov.leavebehindlayout.core.InteractionModel;
+
 class ClosedLayoutState implements LeaveBehindLayoutState {
     @Override
     public int getFlag() {
@@ -13,7 +15,7 @@ class ClosedLayoutState implements LeaveBehindLayoutState {
 
     @Override
     public void applyLayout(LeaveBehindLayout layout) {
-        LeaveBehindLayoutConfig config = layout.getConfig();
+        InteractionModel config = layout.getActualInteractionModel();
         config.applyOffset(config.getClosedPosition());
         layout.invalidate();
     }
@@ -56,12 +58,12 @@ class ClosedLayoutState implements LeaveBehindLayoutState {
 
     boolean shouldInterceptDown(LeaveBehindLayout layout, MotionEvent event) {
         Log.d("Closed State", "Should Intercept Down");
-        final LeaveBehindLayoutConfig config = layout.getConfig();
+        final InteractionModel model = layout.getActualInteractionModel();
         final int actionIndex = event.getActionIndex();
         final float x = event.getX(actionIndex);
         final float y = event.getY(actionIndex);
 
-        final boolean shouldTrackEvent = config.isPointInForeView(x, y);
+        final boolean shouldTrackEvent = model.isPointInForeView(x, y);
         if (shouldTrackEvent) {
             layout.startTrackEvent(actionIndex, x, y);
         }
@@ -79,7 +81,7 @@ class ClosedLayoutState implements LeaveBehindLayoutState {
 
     boolean handleMove(LeaveBehindLayout layout, MotionEvent event) {
         Log.d("Closed State", "Handle Move");
-        final LeaveBehindLayoutConfig config = layout.getConfig();
+        final InteractionModel model = layout.getActualInteractionModel();
         final int actionIndex = layout.getActionIndex();
         if (event.getActionIndex() != actionIndex) return false;
 
@@ -91,21 +93,22 @@ class ClosedLayoutState implements LeaveBehindLayoutState {
         final float dy = y - layout.getMotionInitialY();
 
         Log.d ("ClosedLayout", String.format("%f %f", dx, dy));
-        if (config.canSelectOpeningParameters(dx, dy)) {
-            if (config.setOpeningParametersByOffset(dx, dy)) {
+        if (canSelectOpeningParameters(dx, dy, layout.getTouchSlop())) {
+            if (layout.setActualInteractionModelByOffset(dx, dy)) {
                 layout.getParent().requestDisallowInterceptTouchEvent(true);
                 layout.setState(LeaveBehindLayout.DRAGGING_STATE);
                 layout.updateLastPosition(x, y);
                 //layout.notifyInteractionStarted(config.getLeftBehindGravity(), config.getLeftBehindView());
+                return true;
             }
-            return false;
         }
-        return true;
+
+        return false;
     }
 
     @Override
-    public float getFinalPositionFrom(LeaveBehindLayoutConfig config) {
-        return config.getClosedPosition();
+    public float getFinalPositionFrom(InteractionModel model) {
+        return model.getClosedPosition();
     }
 
     @Override
@@ -118,6 +121,10 @@ class ClosedLayoutState implements LeaveBehindLayoutState {
         return new AnimationEndListener(layout);
     }
 
+    boolean canSelectOpeningParameters(float dx, float dy, float touchSlop) {
+        return (dx > touchSlop) || (dx < -touchSlop) || (dy > touchSlop) || (dy < -touchSlop);
+    }
+
     class AnimationUpdateListener implements DynamicAnimation.OnAnimationUpdateListener {
         LeaveBehindLayout mLayout;
 
@@ -127,11 +134,11 @@ class ClosedLayoutState implements LeaveBehindLayoutState {
 
         @Override
         public void onAnimationUpdate(DynamicAnimation animation, float value, float velocity) {
-            final LeaveBehindLayoutConfig config = mLayout.getConfig();
-            config.applyLeftBehindViewAnimation(value);
-            final int gravity = config.getLeftBehindGravity();
-            final View view = config.getLeftBehindView();
-            final float progress = config.calculateOpeningProgress();
+            final InteractionModel model = mLayout.getActualInteractionModel();
+            model.animateLeftBehindView(value);
+            final int gravity = model.getGravity();
+            final View view = model.getLeftBehindView();
+            final float progress = model.getOpeningProgress();
             mLayout.dispatchLeaveBehindOpeningProgress(gravity, view, progress);
         }
     }
@@ -144,8 +151,8 @@ class ClosedLayoutState implements LeaveBehindLayoutState {
         }
         @Override
         public void onAnimationEnd(DynamicAnimation animation, boolean canceled, float value, float velocity) {
-            final LeaveBehindLayoutConfig config = mLayout.getConfig();
-            mLayout.dispatchLeaveBehindClosed(config.getLeftBehindGravity(), config.getLeftBehindView());
+            final InteractionModel model = mLayout.getActualInteractionModel();
+            mLayout.dispatchLeaveBehindClosed(model.getGravity(), model.getLeftBehindView());
         }
     }
 }
