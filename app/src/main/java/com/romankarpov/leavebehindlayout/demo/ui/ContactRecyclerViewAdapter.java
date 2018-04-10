@@ -2,6 +2,7 @@ package com.romankarpov.leavebehindlayout.demo.ui;
 
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import com.romankarpov.leavebehindlayout.animations.SlideLeftBehindViewAnimation;
 import com.romankarpov.leavebehindlayout.demo.R;
 import com.romankarpov.leavebehindlayout.LeaveBehindLayout;
 import com.romankarpov.leavebehindlayout.extensions.LeaveBehindHelper;
@@ -40,6 +42,9 @@ public class ContactRecyclerViewAdapter
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.contact_list_item, parent, false);
         ViewHolder holder = new ViewHolder(view);
+        holder.getLeaveBehindLayout()
+                .setLeftBehindViewAnimation(SlideLeftBehindViewAnimation.get())
+                .setFlyoutableFlags(Gravity.START|Gravity.END);
         mLeaveBehindHelper.registerViewHolder(holder);
         return holder;
     }

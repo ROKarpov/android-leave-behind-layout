@@ -26,6 +26,8 @@ import com.romankarpov.leavebehindlayout.animations.LeftBehindViewAnimation;
 import com.romankarpov.leavebehindlayout.stateselectors.DefaultStateSelector;
 import com.romankarpov.leavebehindlayout.stateselectors.StateSelector;
 
+import org.jetbrains.annotations.NotNull;
+
 public class LeaveBehindLayout extends ViewGroup {
     private static int DEFAULT_FLYOUTABLE_SIDES =
             Gravity.START
@@ -134,8 +136,10 @@ public class LeaveBehindLayout extends ViewGroup {
 
             for (int i = 0; i < mInteractionModels.length; ++i) {
                 mInteractionModels[i].layout(layoutLeft, layoutTop, layoutRight, layoutBottom);
+                mInteractionModels[i].endInteraction();
             }
             bringChildToFront(mActualInteractionModel.getForeView());
+            mActualInteractionModel.startInteraction();
             mState.applyLayout(this);
         }
     }
@@ -283,19 +287,10 @@ public class LeaveBehindLayout extends ViewGroup {
     public LeftBehindViewAnimation getLeftBehindViewAnimation() {
         return mLeftBehindViewAnimation;
     }
-    void setLeftBehindViewAnimation(LeftBehindViewAnimation leftBehindViewAnimation) {
+    public LeaveBehindLayout setLeftBehindViewAnimation(@NotNull LeftBehindViewAnimation leftBehindViewAnimation) {
         mLeftBehindViewAnimation = leftBehindViewAnimation;
         // TODO: IMPLEMENT ANIMATION RUNTIME UPDATE IN INTERACTION_MODELS.
-    }
-
-
-    LeaveBehindLayoutState getState() {
-        return mState;
-    }
-    void setState(LeaveBehindLayoutState state) {
-        if ((state == null) || (mState == state)) return;
-        mState = state;
-        dispatchStateChanged(mState.getFlag());
+        return this;
     }
 
     public int getOpenedLeftBehindGravity() {
@@ -305,20 +300,18 @@ public class LeaveBehindLayout extends ViewGroup {
     public StateSelector getStateSelector() {
         return mStateSelector;
     }
-    public void setStateSelector(StateSelector stateSelector) {
+    public LeaveBehindLayout setStateSelector(@NotNull StateSelector stateSelector) {
         mStateSelector = stateSelector;
+        return this;
     }
 
     public int getFlyoutableFlags() {
         return mFlyoutableFlags;
     }
-    public void setFlyoutableFlags(int flyoutableFlags) {
+    public LeaveBehindLayout setFlyoutableFlags(int flyoutableFlags) {
         mFlyoutableFlags = flyoutableFlags;
+        return this;
     }
-    public boolean isFlyoutable(int sideGravity) {
-        return (mFlyoutableFlags & sideGravity) == sideGravity;
-    }
-
 
     public InteractionModel getActualInteractionModel() {
         return mActualInteractionModel;
@@ -356,6 +349,15 @@ public class LeaveBehindLayout extends ViewGroup {
             }
         }
         return false;
+    }
+
+    LeaveBehindLayoutState getState() {
+        return mState;
+    }
+    void setState(LeaveBehindLayoutState state) {
+        if ((state == null) || (mState == state)) return;
+        mState = state;
+        dispatchStateChanged(mState.getFlag());
     }
 
     void startAnimationToCurrentState() {

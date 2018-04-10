@@ -32,4 +32,14 @@ public class EmptyViewBehavior implements LeftBehindViewBehavior {
     public float getVerticalOpenOffset() {
         return 0;
     }
+
+    @Override
+    public void onInteractionStart() {
+
+    }
+
+    @Override
+    public void onInteractionEnd() {
+
+    }
 }

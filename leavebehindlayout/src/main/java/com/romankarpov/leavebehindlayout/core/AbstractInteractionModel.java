@@ -6,10 +6,11 @@ import android.view.View;
 
 import com.romankarpov.leavebehindlayout.LeaveBehindLayout;
 import com.romankarpov.leavebehindlayout.core.flyoutbehavior.FlyoutBehavior;
-import com.romankarpov.leavebehindlayout.animations.LeftBehindViewAnimator;
 import com.romankarpov.leavebehindlayout.core.leftbehindviewbehaviors.LeftBehindViewBehavior;
 import com.romankarpov.leavebehindlayout.core.unavailableoffsetbehavior.UnavailableOffsetBehavior;
 import com.romankarpov.leavebehindlayout.animations.LeftBehindViewAnimation;
+
+import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractInteractionModel implements InteractionModel, LeftBehindViewAnimator {
     private int mGravity;
@@ -23,7 +24,7 @@ public abstract class AbstractInteractionModel implements InteractionModel, Left
         mGravity = gravity;
         return this;
     }
-    AbstractInteractionModel setUnavailableOffsetBehavior(UnavailableOffsetBehavior unavailableOffsetBehavior) {
+    AbstractInteractionModel setUnavailableOffsetBehavior(@NotNull UnavailableOffsetBehavior unavailableOffsetBehavior) {
         mUnavailableOffsetBehavior = unavailableOffsetBehavior;
         return this;
     }
@@ -31,15 +32,15 @@ public abstract class AbstractInteractionModel implements InteractionModel, Left
         mForeView = foreView;
         return this;
     }
-    AbstractInteractionModel setLeftBehindViewBehavior(LeftBehindViewBehavior leftBehindViewBehavior) {
+    AbstractInteractionModel setLeftBehindViewBehavior(@NotNull LeftBehindViewBehavior leftBehindViewBehavior) {
         mLeftBehindViewBehavior = leftBehindViewBehavior;
         return this;
     }
-    AbstractInteractionModel setFlyingOutBehavior(FlyoutBehavior flyingOutBehavior) {
+    AbstractInteractionModel setFlyingOutBehavior(@NotNull FlyoutBehavior flyingOutBehavior) {
         mFlyingOutBehavior = flyingOutBehavior;
         return this;
     }
-    AbstractInteractionModel setAnimation(LeftBehindViewAnimation animation) {
+    AbstractInteractionModel setAnimation(@NotNull LeftBehindViewAnimation animation) {
         mLeftBehindViewAnimation = animation;
         return this;
     }
@@ -76,10 +77,10 @@ public abstract class AbstractInteractionModel implements InteractionModel, Left
 
 
     public void startInteraction() {
-        //TODO: IMPLEMENT!
+        mLeftBehindViewBehavior.onInteractionStart();
     }
     public void endInteraction() {
-        //TODO: IMPLEMENT!
+        mLeftBehindViewBehavior.onInteractionEnd();
     }
 
     public void animateLeftBehindView(float value) {

@@ -2,13 +2,15 @@ package com.romankarpov.leavebehindlayout.core.leftbehindviewbehaviors;
 
 import android.view.View;
 
-import com.romankarpov.leavebehindlayout.animations.LeftBehindViewAnimator;
+import com.romankarpov.leavebehindlayout.core.LeftBehindViewAnimator;
+
+import org.jetbrains.annotations.NotNull;
 
 public class OpenableViewBehavior implements LeftBehindViewBehavior {
     View mLeftBehindView;
     LeftBehindViewAnimator mAnimator;
 
-    public OpenableViewBehavior (View leftBehindView, LeftBehindViewAnimator animator) {
+    public OpenableViewBehavior (@NotNull View leftBehindView, @NotNull LeftBehindViewAnimator animator) {
         mLeftBehindView = leftBehindView;
         mAnimator = animator;
     }
@@ -30,8 +32,6 @@ public class OpenableViewBehavior implements LeftBehindViewBehavior {
 
     @Override
     public void applyOffset(float offset) {
-        // TODO: REMOVE CHECKING!
-        if (mAnimator == null) return;
         mAnimator.applyAnimation(mLeftBehindView, offset);
     }
 
@@ -43,5 +43,15 @@ public class OpenableViewBehavior implements LeftBehindViewBehavior {
     @Override
     public float getVerticalOpenOffset() {
         return mLeftBehindView.getHeight();
+    }
+
+    @Override
+    public void onInteractionStart() {
+        mLeftBehindView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onInteractionEnd() {
+        mLeftBehindView.setVisibility(View.INVISIBLE);
     }
 }

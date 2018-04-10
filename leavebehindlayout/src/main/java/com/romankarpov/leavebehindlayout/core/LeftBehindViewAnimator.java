@@ -1,4 +1,4 @@
-package com.romankarpov.leavebehindlayout.animations;
+package com.romankarpov.leavebehindlayout.core;
 
 import android.view.View;
 

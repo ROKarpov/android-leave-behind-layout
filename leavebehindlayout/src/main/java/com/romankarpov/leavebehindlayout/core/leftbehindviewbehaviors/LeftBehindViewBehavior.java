@@ -7,6 +7,9 @@ public interface LeftBehindViewBehavior {
     boolean isInteractWith(View view);
     View getView();
 
+    void onInteractionStart();
+    void onInteractionEnd();
+
     // Not very clear API.
     void applyOffset(float offset);
     float getHorizontalOpenOffset();

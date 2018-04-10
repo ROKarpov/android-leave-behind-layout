@@ -2,10 +2,12 @@ package com.romankarpov.leavebehindlayout.core.leftbehindviewbehaviors;
 
 import android.view.View;
 
+import org.jetbrains.annotations.NotNull;
+
 public class StaticViewBehavior implements LeftBehindViewBehavior {
     View mLeftBehindView;
 
-    public StaticViewBehavior(View leftBehindView) {
+    public StaticViewBehavior(@NotNull View leftBehindView) {
         mLeftBehindView = leftBehindView;
     }
 
@@ -37,5 +39,15 @@ public class StaticViewBehavior implements LeftBehindViewBehavior {
     @Override
     public float getVerticalOpenOffset() {
         return 0;
+    }
+
+    @Override
+    public void onInteractionStart() {
+        mLeftBehindView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onInteractionEnd() {
+        mLeftBehindView.setVisibility(View.INVISIBLE);
     }
 }
