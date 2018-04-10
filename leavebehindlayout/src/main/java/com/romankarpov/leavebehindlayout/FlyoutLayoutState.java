@@ -53,6 +53,7 @@ class FlyoutLayoutState implements LeaveBehindLayoutState {
             final InteractionModel config = mLayout.getActualInteractionModel();
             final int gravity = config.getGravity();
             final float progress = config.getFlyingOutProgress();
+            config.animateLeftBehindView(value);
             mLayout.dispatchFlyingOut(gravity, progress);
         }
     }
