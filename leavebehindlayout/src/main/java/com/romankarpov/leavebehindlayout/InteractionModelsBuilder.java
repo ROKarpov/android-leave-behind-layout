@@ -1,29 +1,15 @@
-package com.romankarpov.leavebehindlayout.core;
+package com.romankarpov.leavebehindlayout;
 
 
 import android.support.v4.view.GravityCompat;
 import android.view.Gravity;
 import android.view.View;
 
-import com.romankarpov.leavebehindlayout.LeaveBehindLayout;
-import com.romankarpov.leavebehindlayout.core.flyoutbehavior.FlyoutBehavior;
-import com.romankarpov.leavebehindlayout.core.flyoutbehavior.FlyoutableBehavior;
-import com.romankarpov.leavebehindlayout.core.flyoutbehavior.UnflyoutableBehavior;
-import com.romankarpov.leavebehindlayout.animations.LeftBehindViewAnimation;
-import com.romankarpov.leavebehindlayout.core.leftbehindviewbehaviors.EmptyViewBehavior;
-import com.romankarpov.leavebehindlayout.core.leftbehindviewbehaviors.LeftBehindViewBehavior;
-import com.romankarpov.leavebehindlayout.core.leftbehindviewbehaviors.OpenableViewBehavior;
-import com.romankarpov.leavebehindlayout.core.leftbehindviewbehaviors.StaticViewBehavior;
-import com.romankarpov.leavebehindlayout.core.unavailableoffsetbehavior.SwitchToOppositeOffsetBehavior;
-import com.romankarpov.leavebehindlayout.core.unavailableoffsetbehavior.ZeroOffsetUnavailableOffsetBehavior;
-
-import org.jetbrains.annotations.NotNull;
-
 import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class InteractionModelsBuilder {
+class InteractionModelsBuilder {
     Map<Integer, InteractionModelConfig> mConfigs = new HashMap<>();
     LeaveBehindLayout mLayout;
 
@@ -104,7 +90,7 @@ public class InteractionModelsBuilder {
         LeftBehindViewBehavior leftBehindViewBehavior = null;
         if (config.mView != null) {
             if (config.mIsOpenable)
-                leftBehindViewBehavior = new OpenableViewBehavior(config.mView, model);
+                leftBehindViewBehavior = new OpenableViewBehavior(model, config.mView, model, mLayout);
             else
                 leftBehindViewBehavior = new StaticViewBehavior(config.mView);
         }

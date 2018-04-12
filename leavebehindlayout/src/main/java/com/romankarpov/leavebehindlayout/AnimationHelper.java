@@ -1,9 +1,5 @@
 package com.romankarpov.leavebehindlayout;
 
-import com.romankarpov.leavebehindlayout.animations.LeftBehindViewAnimation;
-import com.romankarpov.leavebehindlayout.animations.SlideLeftBehindViewAnimation;
-import com.romankarpov.leavebehindlayout.animations.StaticLeftBehindViewAnimation;
-
 class AnimationHelper {
     public static final int STATIC_ANIMATION = 1;
     public static final int SLIDE_ANIMATION = 2;

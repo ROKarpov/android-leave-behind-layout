@@ -1,4 +1,4 @@
-package com.romankarpov.leavebehindlayout.core;
+package com.romankarpov.leavebehindlayout;
 
 import android.support.animation.DynamicAnimation;
 import android.view.VelocityTracker;

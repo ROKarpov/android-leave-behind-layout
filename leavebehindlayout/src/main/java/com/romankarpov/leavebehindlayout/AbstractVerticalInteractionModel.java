@@ -1,9 +1,9 @@
-package com.romankarpov.leavebehindlayout.core;
+package com.romankarpov.leavebehindlayout;
 
 import android.support.animation.DynamicAnimation;
 import android.view.VelocityTracker;
 
-public abstract class AbstractVerticalInteractionModel extends AbstractInteractionModel {
+abstract class AbstractVerticalInteractionModel extends AbstractInteractionModel {
     @Override
     public float getOpenedPosition() {
         return mLeftBehindViewBehavior.getVerticalOpenOffset();

@@ -1,8 +1,4 @@
-package com.romankarpov.leavebehindlayout.stateselectors;
-
-import com.romankarpov.leavebehindlayout.LeaveBehindLayout;
-import com.romankarpov.leavebehindlayout.LeaveBehindLayoutState;
-import com.romankarpov.leavebehindlayout.core.InteractionModel;
+package com.romankarpov.leavebehindlayout;
 
 public class DefaultStateSelector implements StateSelector {
     final static float PROGRESS_THRESHOLD = 0.5f;

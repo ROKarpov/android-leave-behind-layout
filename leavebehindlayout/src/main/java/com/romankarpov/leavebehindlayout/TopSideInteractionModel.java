@@ -1,11 +1,9 @@
-package com.romankarpov.leavebehindlayout.core;
+package com.romankarpov.leavebehindlayout;
 
 import android.view.View;
 
-import com.romankarpov.leavebehindlayout.LeaveBehindLayout;
 
-
-public class TopSideInteractionModel extends AbstractVerticalInteractionModel {
+class TopSideInteractionModel extends AbstractVerticalInteractionModel {
     @Override
     public float getOpenedPosition() {
         return mLeftBehindViewBehavior.getVerticalOpenOffset();

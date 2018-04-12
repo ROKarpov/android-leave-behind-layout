@@ -1,9 +1,9 @@
-package com.romankarpov.leavebehindlayout.core;
+package com.romankarpov.leavebehindlayout;
 
 import android.support.animation.DynamicAnimation;
 import android.view.VelocityTracker;
 
-public abstract class AbstractHorizontalInteractionModel extends AbstractInteractionModel {
+abstract class AbstractHorizontalInteractionModel extends AbstractInteractionModel {
     @Override
     public float selectValue(float x, float y) {
         return x;

@@ -48,13 +48,25 @@ public interface LeaveBehindHelper {
 
         private class LeaveBehindLayoutListener extends SimpleLeaveBehindLayoutListener {
             @Override
-            public void onStateChanged(int stateFlag) {
-                mListener.onStateChanged(ViewHolder.this, stateFlag);
+            public void onLeaveBehindClosed(int gravity, View view) {
+                mListener.onLeaveBehindClosed(ViewHolder.this, gravity);
+            }
+
+            @Override
+            public void onLeaveBehindOpened(int gravity, View view) {
+                mListener.onLeaveBehindOpened(ViewHolder.this, gravity);
+            }
+
+            @Override
+            public void onLeaveBehindOpeningProgress(int gravity, View view, float progress) {
+                mListener.onLeaveBehindOpening(ViewHolder.this, gravity, progress);
             }
         }
 
         interface Listener {
-            void onStateChanged(ViewHolder holder, int stateFlag);
+            void onLeaveBehindClosed(ViewHolder holder, int gravity);
+            void onLeaveBehindOpened(ViewHolder holder, int gravity);
+            void onLeaveBehindOpening(ViewHolder holder, int gravity, float progress);
         }
     }
 }

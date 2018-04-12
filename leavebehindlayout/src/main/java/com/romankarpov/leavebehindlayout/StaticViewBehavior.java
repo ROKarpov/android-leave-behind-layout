@@ -1,8 +1,16 @@
-package com.romankarpov.leavebehindlayout.core.leftbehindviewbehaviors;
+package com.romankarpov.leavebehindlayout;
 
 import android.view.View;
 
-public class EmptyViewBehavior implements LeftBehindViewBehavior {
+import org.jetbrains.annotations.NotNull;
+
+class StaticViewBehavior implements LeftBehindViewBehavior {
+    View mLeftBehindView;
+
+    public StaticViewBehavior(@NotNull View leftBehindView) {
+        mLeftBehindView = leftBehindView;
+    }
+
     @Override
     public boolean isAvailable() {
         return false;
@@ -10,12 +18,12 @@ public class EmptyViewBehavior implements LeftBehindViewBehavior {
 
     @Override
     public boolean isInteractWith(View view) {
-        return false;
+        return view == mLeftBehindView;
     }
 
     @Override
     public View getView() {
-        return null;
+        return mLeftBehindView;
     }
 
     @Override
@@ -35,11 +43,11 @@ public class EmptyViewBehavior implements LeftBehindViewBehavior {
 
     @Override
     public void onInteractionStart() {
-
+        mLeftBehindView.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onInteractionEnd() {
-
+        mLeftBehindView.setVisibility(View.INVISIBLE);
     }
 }

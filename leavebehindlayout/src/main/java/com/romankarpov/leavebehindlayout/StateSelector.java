@@ -1,7 +1,7 @@
-package com.romankarpov.leavebehindlayout.stateselectors;
+package com.romankarpov.leavebehindlayout;
 
+import com.romankarpov.leavebehindlayout.InteractionModel;
 import com.romankarpov.leavebehindlayout.LeaveBehindLayoutState;
-import com.romankarpov.leavebehindlayout.core.InteractionModel;
 
 public interface StateSelector {
     LeaveBehindLayoutState selectState(InteractionModel model, float velocity);

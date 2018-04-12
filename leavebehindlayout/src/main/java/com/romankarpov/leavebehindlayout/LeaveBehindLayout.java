@@ -20,15 +20,13 @@ import android.widget.FrameLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.romankarpov.leavebehindlayout.core.InteractionModel;
-import com.romankarpov.leavebehindlayout.core.InteractionModelsBuilder;
-import com.romankarpov.leavebehindlayout.animations.LeftBehindViewAnimation;
-import com.romankarpov.leavebehindlayout.stateselectors.DefaultStateSelector;
-import com.romankarpov.leavebehindlayout.stateselectors.StateSelector;
-
 import org.jetbrains.annotations.NotNull;
 
-public class LeaveBehindLayout extends ViewGroup {
+
+public class LeaveBehindLayout
+        extends ViewGroup
+        implements OpenableViewBehavior.ApplyOffsetCallback
+{
     private static int DEFAULT_FLYOUTABLE_SIDES =
             Gravity.START
             |Gravity.LEFT
@@ -37,18 +35,13 @@ public class LeaveBehindLayout extends ViewGroup {
             | Gravity.END
             | Gravity.BOTTOM;
 
-    public static final int FLAG_CLOSED = 0;
     public static final LeaveBehindLayoutState CLOSED_STATE = new ClosedLayoutState();
-    public static final int FLAG_DRAGGING = 1;
     public static final LeaveBehindLayoutState DRAGGING_STATE = new DraggingLayoutState();
-    public static final int FLAG_OPENED = 2;
     public static final LeaveBehindLayoutState OPENED_STATE = new OpenedLayoutState();
-    public static final int FLAG_FLYOUT = 4;
     public static final LeaveBehindLayoutState FLYOUT_STATE = new FlyoutLayoutState();
 
-
-    InteractionModel[] mInteractionModels;
-    InteractionModel mActualInteractionModel;
+    private InteractionModel[] mInteractionModels;
+    private InteractionModel mActualInteractionModel;
 
     private StateSelector mStateSelector;
     private LeaveBehindLayoutState mState;
@@ -316,14 +309,14 @@ public class LeaveBehindLayout extends ViewGroup {
     public InteractionModel getActualInteractionModel() {
         return mActualInteractionModel;
     }
-    // FOR INTERNAL USE ONLY!
-    public boolean setActualInteractionModel(InteractionModel actualInteractionModel) {
+
+    boolean setActualInteractionModel(InteractionModel actualInteractionModel) {
         mActualInteractionModel.endInteraction();
         mActualInteractionModel = actualInteractionModel;
         mActualInteractionModel.startInteraction();
         return true;
     }
-    public boolean setActualInteractionModelByGravity(int gravity) {
+    boolean setActualInteractionModelByGravity(int gravity) {
         for (int i = 0; i < mInteractionModels.length; ++i) {
             if (mInteractionModels[i].getGravity() == gravity) {
                 return setActualInteractionModel(mInteractionModels[i]);
@@ -331,7 +324,7 @@ public class LeaveBehindLayout extends ViewGroup {
         }
         return false;
     }
-    public boolean setActualInteractionModelByView(View view) {
+    boolean setActualInteractionModelByView(View view) {
         for (int i = 0; i < mInteractionModels.length; ++i) {
             if (mInteractionModels[i].getLeftBehindView() == view) {
                 return setActualInteractionModel(mInteractionModels[i]);
@@ -339,7 +332,7 @@ public class LeaveBehindLayout extends ViewGroup {
         }
         return false;
     }
-    public boolean setActualInteractionModelByOffset(float dx, float dy) {
+    boolean setActualInteractionModelByOffset(float dx, float dy) {
         final float absDx = Math.abs(dx);
         final float absDy = Math.abs(dy);
 
@@ -351,13 +344,10 @@ public class LeaveBehindLayout extends ViewGroup {
         return false;
     }
 
-    LeaveBehindLayoutState getState() {
-        return mState;
-    }
     void setState(LeaveBehindLayoutState state) {
         if ((state == null) || (mState == state)) return;
         mState = state;
-        dispatchStateChanged(mState.getFlag());
+        mState.onStateSpecified(this);
     }
 
     void startAnimationToCurrentState() {
@@ -392,10 +382,10 @@ public class LeaveBehindLayout extends ViewGroup {
         return mVelocityTracker;
     }
 
-    public boolean isEventTracked() {
+    boolean isEventTracked() {
         return mIsInterceptingTouchEvent;
     }
-    public void startTrackEvent(int actionIndex, float x, float y) {
+    void startTrackEvent(int actionIndex, float x, float y) {
         if (!mIsInterceptingTouchEvent) {
             mIsInterceptingTouchEvent = true;
             mActionIndex = actionIndex;
@@ -436,6 +426,12 @@ public class LeaveBehindLayout extends ViewGroup {
     }
 
     int getTouchSlop() { return mTouchSlop; }
+
+    @Override
+    public void onApplyOffset(float offset, float progress, int gravity, View view) {
+        dispatchLeaveBehindOpeningProgress(gravity, view, progress);
+    }
+
     //endregion
 
     //region listeners API
@@ -472,11 +468,6 @@ public class LeaveBehindLayout extends ViewGroup {
     void dispatchFlewOut(int gravity) {
         for (Listener listener : mListeners) {
             listener.onFlewOut(gravity);
-        }
-    }
-    void dispatchStateChanged(int stateFlag) {
-        for (Listener listener : mListeners) {
-            listener.onStateChanged(stateFlag);
         }
     }
     //endregion
@@ -556,10 +547,6 @@ public class LeaveBehindLayout extends ViewGroup {
     }
 
     public interface Listener {
-        //void onInteractionStarted(int gravity, View view);
-
-        void onStateChanged(int stateFlag);
-
         void onLeaveBehindClosed(int gravity, View view);
 
         void onLeaveBehindOpeningProgress(int gravity, View view, float progress);

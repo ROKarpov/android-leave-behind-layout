@@ -1,28 +1,26 @@
-package com.romankarpov.leavebehindlayout.core;
+package com.romankarpov.leavebehindlayout;
 
 import android.view.View;
 
-import com.romankarpov.leavebehindlayout.LeaveBehindLayout;
 
-
-public class RightSideInteractionModel extends AbstractHorizontalInteractionModel {
+class BottomSideInteractionModel extends AbstractVerticalInteractionModel {
     @Override
     public float getOpenedPosition() {
-        return -mLeftBehindViewBehavior.getHorizontalOpenOffset();
+        return -mLeftBehindViewBehavior.getVerticalOpenOffset();
     }
     @Override
     public float getFlewOutPosition() {
-        return -mForeView.getWidth();
+        return -mForeView.getHeight();
     }
 
     @Override
     public boolean isInteractionStarted(float dx, float dy, float absDx, float absDy) {
-        return (absDx > absDy) && (dx < 0);
+        return (absDy > absDx) && (dy > 0);
     }
 
     @Override
-    public boolean isApplicable(float offset) {
-        return offset <= 0;
+    public boolean isApplicable(float value) {
+        return value >= 0;
     }
 
     @Override
@@ -34,15 +32,15 @@ public class RightSideInteractionModel extends AbstractHorizontalInteractionMode
 
         LeaveBehindLayout.LayoutParams lp = (LeaveBehindLayout.LayoutParams)view.getLayoutParams();
 
-        final int right = r - lp.rightMargin;
-        final int top = t + lp.topMargin;
-        final int left = right - view.getMeasuredWidth();
-        final int bottom = top + view.getMeasuredHeight();
+        final int left = l + lp.leftMargin;
+        final int bottom = b - lp.bottomMargin;
+        final int right = left + view.getMeasuredWidth();
+        final int top = bottom - view.getMeasuredHeight();
         view.layout(left, top, right, bottom);
     }
 
     @Override
     public void applyAnimation(View view, float value) {
-        mLeftBehindViewAnimation.applyRight(view, value);
+        mLeftBehindViewAnimation.applyBottom(view, value);
     }
 }

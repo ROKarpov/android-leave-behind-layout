@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import com.romankarpov.leavebehindlayout.animations.SlideLeftBehindViewAnimation;
+import com.romankarpov.leavebehindlayout.SlideLeftBehindViewAnimation;
 import com.romankarpov.leavebehindlayout.demo.R;
 import com.romankarpov.leavebehindlayout.LeaveBehindLayout;
 import com.romankarpov.leavebehindlayout.extensions.LeaveBehindHelper;

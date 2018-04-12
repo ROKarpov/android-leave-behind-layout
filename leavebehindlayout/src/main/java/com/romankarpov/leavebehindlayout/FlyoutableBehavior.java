@@ -1,9 +1,9 @@
-package com.romankarpov.leavebehindlayout.core.flyoutbehavior;
+package com.romankarpov.leavebehindlayout;
 
-public class UnflyoutableBehavior implements FlyoutBehavior {
+class FlyoutableBehavior implements FlyoutBehavior {
     @Override
     public boolean isAvailable() {
-        return false;
+        return true;
     }
 
     @Override

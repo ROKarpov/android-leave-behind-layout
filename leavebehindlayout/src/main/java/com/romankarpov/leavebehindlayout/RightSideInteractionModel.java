@@ -1,37 +1,26 @@
-package com.romankarpov.leavebehindlayout.core;
+package com.romankarpov.leavebehindlayout;
 
 import android.view.View;
 
-import com.romankarpov.leavebehindlayout.LeaveBehindLayout;
 
-
-public class LeftSideInteractionModel extends AbstractHorizontalInteractionModel {
+class RightSideInteractionModel extends AbstractHorizontalInteractionModel {
     @Override
     public float getOpenedPosition() {
-        return mLeftBehindViewBehavior.getHorizontalOpenOffset();
+        return -mLeftBehindViewBehavior.getHorizontalOpenOffset();
     }
     @Override
     public float getFlewOutPosition() {
-        return mForeView.getWidth();
-    }
-
-    @Override
-    public float getOpeningProgress() {
-        return getCurrentPosition() / getOpenedPosition();
-    }
-    @Override
-    public float getFlyingOutProgress() {
-        return getCurrentPosition() / getFlewOutPosition();
+        return -mForeView.getWidth();
     }
 
     @Override
     public boolean isInteractionStarted(float dx, float dy, float absDx, float absDy) {
-        return (absDx > absDy) && (dx > 0);
+        return (absDx > absDy) && (dx < 0);
     }
 
     @Override
     public boolean isApplicable(float offset) {
-        return offset >= 0;
+        return offset <= 0;
     }
 
     @Override
@@ -43,15 +32,15 @@ public class LeftSideInteractionModel extends AbstractHorizontalInteractionModel
 
         LeaveBehindLayout.LayoutParams lp = (LeaveBehindLayout.LayoutParams)view.getLayoutParams();
 
-        final int left = l + lp.leftMargin;
+        final int right = r - lp.rightMargin;
         final int top = t + lp.topMargin;
-        final int right = left + view.getMeasuredWidth();
+        final int left = right - view.getMeasuredWidth();
         final int bottom = top + view.getMeasuredHeight();
         view.layout(left, top, right, bottom);
     }
 
     @Override
     public void applyAnimation(View view, float value) {
-        mLeftBehindViewAnimation.applyLeft(view, value);
+        mLeftBehindViewAnimation.applyRight(view, value);
     }
 }

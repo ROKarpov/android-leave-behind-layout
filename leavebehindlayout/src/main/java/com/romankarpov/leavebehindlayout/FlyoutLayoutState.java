@@ -3,14 +3,7 @@ package com.romankarpov.leavebehindlayout;
 import android.support.animation.DynamicAnimation;
 import android.view.MotionEvent;
 
-import com.romankarpov.leavebehindlayout.core.InteractionModel;
-
 class FlyoutLayoutState implements LeaveBehindLayoutState {
-    @Override
-    public int getFlag() {
-        return LeaveBehindLayout.FLAG_FLYOUT;
-    }
-
     @Override
     public void applyLayout(LeaveBehindLayout layout) {
 
@@ -39,6 +32,11 @@ class FlyoutLayoutState implements LeaveBehindLayoutState {
     @Override
     public DynamicAnimation.OnAnimationEndListener getAnimationEndListener(LeaveBehindLayout layout) {
         return new AnimationEndListener(layout);
+    }
+
+    @Override
+    public void onStateSpecified(LeaveBehindLayout layout) {
+        // TODO: IMPLEMENT!
     }
 
     class AnimationUpdateListener implements DynamicAnimation.OnAnimationUpdateListener {

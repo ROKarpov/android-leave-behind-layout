@@ -1,8 +1,8 @@
-package com.romankarpov.leavebehindlayout.core.leftbehindviewbehaviors;
+package com.romankarpov.leavebehindlayout;
 
 import android.view.View;
 
-public interface LeftBehindViewBehavior {
+interface LeftBehindViewBehavior {
     boolean isAvailable();
     boolean isInteractWith(View view);
     View getView();

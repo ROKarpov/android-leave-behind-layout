@@ -4,15 +4,8 @@ import android.support.animation.DynamicAnimation;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 
-import com.romankarpov.leavebehindlayout.core.InteractionModel;
-
 
 class DraggingLayoutState implements LeaveBehindLayoutState {
-    @Override
-    public int getFlag() {
-        return LeaveBehindLayout.FLAG_DRAGGING;
-    }
-
     @Override
     public boolean shouldInterceptTouchEvent(LeaveBehindLayout layout, MotionEvent event) {
         return false;
@@ -96,5 +89,10 @@ class DraggingLayoutState implements LeaveBehindLayoutState {
     @Override
     public DynamicAnimation.OnAnimationEndListener getAnimationEndListener(LeaveBehindLayout layout) {
         throw new IllegalStateException("The \'getAnimationEndListener\' method is not applicable in this state.");
+    }
+
+    @Override
+    public void onStateSpecified(LeaveBehindLayout layout) {
+        // TODO: IMPLEMENT!
     }
 }

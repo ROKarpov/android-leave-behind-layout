@@ -27,19 +27,23 @@ class MultipleItemsOpeningLeaveBehindHelper
     }
 
     @Override
-    public void onStateChanged(ViewHolder holder, int stateFlag) {
+    public void onLeaveBehindClosed(ViewHolder holder, int gravity) {
         final int currentPosition = holder.getAdapterPosition();
-        switch (stateFlag) {
-            case LeaveBehindLayout.FLAG_CLOSED:
-                if (mOpenedItemPositions.containsKey(currentPosition)) {
-                    mOpenedItemPositions.remove(currentPosition);
-                }
-                break;
-            case LeaveBehindLayout.FLAG_OPENED:
-                mOpenedItemPositions.put(
-                        holder.getAdapterPosition(),
-                        holder.getLeaveBehindLayout().getOpenedLeftBehindGravity());
-                break;
+        if (mOpenedItemPositions.containsKey(currentPosition)) {
+            mOpenedItemPositions.remove(currentPosition);
         }
+    }
+
+    @Override
+    public void onLeaveBehindOpened(ViewHolder holder, int gravity) {
+        final int currentPosition = holder.getAdapterPosition();
+        mOpenedItemPositions.put(
+                currentPosition,
+                holder.getLeaveBehindLayout().getOpenedLeftBehindGravity());
+    }
+
+    @Override
+    public void onLeaveBehindOpening(ViewHolder holder, int gravity, float progress) {
+
     }
 }

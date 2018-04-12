@@ -1,28 +1,35 @@
-package com.romankarpov.leavebehindlayout.core;
+package com.romankarpov.leavebehindlayout;
 
 import android.view.View;
 
-import com.romankarpov.leavebehindlayout.LeaveBehindLayout;
 
-
-public class BottomSideInteractionModel extends AbstractVerticalInteractionModel {
+class LeftSideInteractionModel extends AbstractHorizontalInteractionModel {
     @Override
     public float getOpenedPosition() {
-        return -mLeftBehindViewBehavior.getVerticalOpenOffset();
+        return mLeftBehindViewBehavior.getHorizontalOpenOffset();
     }
     @Override
     public float getFlewOutPosition() {
-        return -mForeView.getHeight();
+        return mForeView.getWidth();
+    }
+
+    @Override
+    public float getOpeningProgress() {
+        return getCurrentPosition() / getOpenedPosition();
+    }
+    @Override
+    public float getFlyingOutProgress() {
+        return getCurrentPosition() / getFlewOutPosition();
     }
 
     @Override
     public boolean isInteractionStarted(float dx, float dy, float absDx, float absDy) {
-        return (absDy > absDx) && (dy > 0);
+        return (absDx > absDy) && (dx > 0);
     }
 
     @Override
-    public boolean isApplicable(float value) {
-        return value >= 0;
+    public boolean isApplicable(float offset) {
+        return offset >= 0;
     }
 
     @Override
@@ -35,14 +42,14 @@ public class BottomSideInteractionModel extends AbstractVerticalInteractionModel
         LeaveBehindLayout.LayoutParams lp = (LeaveBehindLayout.LayoutParams)view.getLayoutParams();
 
         final int left = l + lp.leftMargin;
-        final int bottom = b - lp.bottomMargin;
+        final int top = t + lp.topMargin;
         final int right = left + view.getMeasuredWidth();
-        final int top = bottom - view.getMeasuredHeight();
+        final int bottom = top + view.getMeasuredHeight();
         view.layout(left, top, right, bottom);
     }
 
     @Override
     public void applyAnimation(View view, float value) {
-        mLeftBehindViewAnimation.applyBottom(view, value);
+        mLeftBehindViewAnimation.applyLeft(view, value);
     }
 }

@@ -6,14 +6,8 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.romankarpov.leavebehindlayout.core.InteractionModel;
 
 class OpenedLayoutState implements LeaveBehindLayoutState {
-    @Override
-    public int getFlag() {
-        return LeaveBehindLayout.FLAG_OPENED;
-    }
-
     @Override
     public final void applyLayout(LeaveBehindLayout layout) {
         InteractionModel model = layout.getActualInteractionModel();
@@ -143,6 +137,11 @@ class OpenedLayoutState implements LeaveBehindLayoutState {
                     || (gravity == Gravity.BOTTOM))
             );
         }
+    }
+
+    @Override
+    public void onStateSpecified(LeaveBehindLayout layout) {
+        // TODO: IMPLEMENT!
     }
 
     class AnimationUpdateListener implements DynamicAnimation.OnAnimationUpdateListener {

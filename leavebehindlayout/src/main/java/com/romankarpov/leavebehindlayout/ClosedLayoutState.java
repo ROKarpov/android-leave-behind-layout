@@ -5,14 +5,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.romankarpov.leavebehindlayout.core.InteractionModel;
-
 class ClosedLayoutState implements LeaveBehindLayoutState {
-    @Override
-    public int getFlag() {
-        return LeaveBehindLayout.FLAG_CLOSED;
-    }
-
     @Override
     public void applyLayout(LeaveBehindLayout layout) {
         InteractionModel config = layout.getActualInteractionModel();
@@ -123,6 +116,11 @@ class ClosedLayoutState implements LeaveBehindLayoutState {
 
     boolean canSelectOpeningParameters(float dx, float dy, float touchSlop) {
         return (dx > touchSlop) || (dx < -touchSlop) || (dy > touchSlop) || (dy < -touchSlop);
+    }
+
+    @Override
+    public void onStateSpecified(LeaveBehindLayout layout) {
+        // TODO: IMPLEMENT!
     }
 
     class AnimationUpdateListener implements DynamicAnimation.OnAnimationUpdateListener {

@@ -27,31 +27,30 @@ class SingleItemOpeningLeaveBehindHelper implements LeaveBehindHelper, LeaveBehi
     }
 
     @Override
-    public void onStateChanged(ViewHolder holder, int stateFlag) {
-        switch (stateFlag) {
-            case LeaveBehindLayout.FLAG_CLOSED:
-                if (holder.getAdapterPosition() == mOpenedItemPosition) {
-                    mOpenedItem = null;
-                    mOpenedItemPosition = EMPTY_OPENED_ITEM_POSITION;
-                    mOpenedGravity = EMPTY_GRAVITY;
-                }
-                break;
-            case LeaveBehindLayout.FLAG_OPENED:
-                mOpenedItem = holder;
-                mOpenedItemPosition = holder.getAdapterPosition();
-                mOpenedGravity = holder.getLeaveBehindLayout().getOpenedLeftBehindGravity();
-                break;
-            case LeaveBehindLayout.FLAG_DRAGGING:
-                if ((mOpenedItemPosition != EMPTY_OPENED_ITEM_POSITION)
-                        && (mOpenedItemPosition != holder.getAdapterPosition())
-                        && (mOpenedItem.getAdapterPosition() == mOpenedItemPosition)) {
-                    mOpenedItem.getLeaveBehindLayout().closeLeftBehind();
-                }
-                mOpenedItem = null;
-                mOpenedItemPosition = EMPTY_OPENED_ITEM_POSITION;
-                mOpenedGravity = EMPTY_GRAVITY;
-                break;
-            default: break;
+    public void onLeaveBehindClosed(ViewHolder holder, int gravity) {
+        if (holder.getAdapterPosition() == mOpenedItemPosition) {
+            mOpenedItem = null;
+            mOpenedItemPosition = EMPTY_OPENED_ITEM_POSITION;
+            mOpenedGravity = EMPTY_GRAVITY;
         }
+    }
+
+    @Override
+    public void onLeaveBehindOpened(ViewHolder holder, int gravity) {
+        mOpenedItem = holder;
+        mOpenedItemPosition = holder.getAdapterPosition();
+        mOpenedGravity = holder.getLeaveBehindLayout().getOpenedLeftBehindGravity();
+    }
+
+    @Override
+    public void onLeaveBehindOpening(ViewHolder holder, int gravity, float progress) {
+        if ((mOpenedItemPosition != EMPTY_OPENED_ITEM_POSITION)
+                && (mOpenedItemPosition != holder.getAdapterPosition())
+                && (mOpenedItem.getAdapterPosition() == mOpenedItemPosition)) {
+            mOpenedItem.getLeaveBehindLayout().closeLeftBehind();
+        }
+        mOpenedItem = null;
+        mOpenedItemPosition = EMPTY_OPENED_ITEM_POSITION;
+        mOpenedGravity = EMPTY_GRAVITY;
     }
 }

@@ -1,18 +1,12 @@
-package com.romankarpov.leavebehindlayout.core;
+package com.romankarpov.leavebehindlayout;
 
 import android.support.animation.DynamicAnimation;
 import android.view.VelocityTracker;
 import android.view.View;
 
-import com.romankarpov.leavebehindlayout.LeaveBehindLayout;
-import com.romankarpov.leavebehindlayout.core.flyoutbehavior.FlyoutBehavior;
-import com.romankarpov.leavebehindlayout.core.leftbehindviewbehaviors.LeftBehindViewBehavior;
-import com.romankarpov.leavebehindlayout.core.unavailableoffsetbehavior.UnavailableOffsetBehavior;
-import com.romankarpov.leavebehindlayout.animations.LeftBehindViewAnimation;
-
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractInteractionModel implements InteractionModel, LeftBehindViewAnimator {
+abstract class AbstractInteractionModel implements InteractionModel, LeftBehindViewAnimator {
     private int mGravity;
     private UnavailableOffsetBehavior mUnavailableOffsetBehavior;
     View mForeView;

@@ -1,10 +1,6 @@
-package com.romankarpov.leavebehindlayout.core.unavailableoffsetbehavior;
+package com.romankarpov.leavebehindlayout;
 
-import com.romankarpov.leavebehindlayout.LeaveBehindLayout;
-import com.romankarpov.leavebehindlayout.core.AbstractInteractionModel;
-import com.romankarpov.leavebehindlayout.core.InteractionModel;
-
-public class SwitchToOppositeOffsetBehavior implements UnavailableOffsetBehavior {
+class SwitchToOppositeOffsetBehavior implements UnavailableOffsetBehavior {
     LeaveBehindLayout mLayout;
     InteractionModel mOppositeModel;
     public SwitchToOppositeOffsetBehavior(
